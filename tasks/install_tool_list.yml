@@ -1,4 +1,3 @@
 ---
 - name: Install Tool Shed tools
-  command: '{{galaxy_custom_script_path}}/install-tools {{GALAXY_ADMIN_API_KEY}} {{tool_list_file}}'
-  notify: restart galaxy
+  command: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{notify: restart galaxy
