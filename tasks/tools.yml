@@ -19,6 +19,7 @@
   template:
     src: 'install-tools.sh.j2'
     dest: '{{galaxy_custom_script_path}}/install-tools'
+    mode: a+x
 
 - include: install_tool_list.yml
   with_items: '{{ galaxy_tools_tool_list_files }}'
