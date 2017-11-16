@@ -1,2 +1,6 @@
 ---
 # handlers file for ansible-role-galaxycloud-tools
+
+- name: restart galaxy
+  include: handlers/galaxy_restart.yml
+  static: no # This is a temporary workaround for https://github.com/ansible/ansible/issues/18178
