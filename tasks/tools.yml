@@ -11,7 +11,7 @@
   apt:
     name: '{{ item }}'
     state: present
-  with_item:
+  with_items:
     - lsof
   when: ansible_os_family == "Debian"
 
