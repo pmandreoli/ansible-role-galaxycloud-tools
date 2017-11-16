@@ -1,0 +1,26 @@
+---
+- name: '[EL] Install script dependencies'
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - lsof
+  when: ansible_os_family == "RedHat"
+
+- name: '[Ubuntu] Install dependencies'
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_item:
+    - lsof
+  when: ansible_os_family == "Debian"
+
+- name: Copy the install-tools script
+  template:
+    src: 'install-tools.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/install-tools'
+
+- include: install_tool_list.yml
+  with_items: '{{ galaxy_tools_tool_list_files }}'
+  loop_control:
+    loop_var: tool_list_file
