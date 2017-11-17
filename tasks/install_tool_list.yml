@@ -1,4 +1,4 @@
 ---
-- name: 'Install Tool Shed tools. Log file available to /tmp/galaxy_install_tools.log'
+- name: 'Install Tool Shed tools. Log file available to /tmp/galaxy_tool_install.log'
   command: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}}'
   notify: restart galaxy
