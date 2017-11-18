@@ -1,4 +1,4 @@
 ---
 # tasks file for ansible-role-galaxycloud-tools
 
-- include: tools.yml
+- include: install.yml
