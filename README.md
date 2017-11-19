@@ -27,10 +27,6 @@ Including an example of how to use your role (for instance, with variables passe
     - hosts: server
       pre_tasks:
         - set_fact: galaxy_flavor="galaxy-rna-workbench"
-        - get_url: url="https://raw.githubusercontent.com/indigo-dc/Galaxy-flavors-recipes/master/galaxy-flavors/{{galaxy_flavor}}-tool-list.yml" dest="/tmp/"
-          when: galaxy_flavor != 'galaxy-no-tools'
-      vars:
-        galaxy_tools_tool_list_files: [ "/tmp/{{ galaxy_flavor }}-tool-list.yml" ]
       roles:
         - role: indigo-dc.galaxycloud-tools
           galaxy_admin_api_key: "ADMIN_API_KEY"
