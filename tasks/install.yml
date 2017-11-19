@@ -1,2 +1,9 @@
 ---
+# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in /tmp
+- name: Get Galaxy flavor recipes
+  git:
+    repo: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
+    clone: yes
+    dest: '/tmp'
+
 - include: tools.yml
