@@ -4,6 +4,7 @@
   git:
     repo: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
     clone: yes
-    dest: '/tmp'
+    force: yes
+    dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
 
 - include: tools.yml
