@@ -1,4 +1,7 @@
 ---
 # tasks file for ansible-role-galaxycloud-tools
+- stat: path='{{lock_file_path}}/indigo-dc.galaxycloud-tools.lock'
+  register: role_locked
 
 - include: install.yml
+  when: not role_locked.stat.exists
