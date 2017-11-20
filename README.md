@@ -25,12 +25,10 @@ Including an example of how to use your role (for instance, with variables passe
 
 ```yaml
     - hosts: server
-      pre_tasks:
-        - set_fact: galaxy_flavor="galaxy-rna-workbench"
       roles:
         - role: indigo-dc.galaxycloud-tools
+          galaxy_flavor="galaxy-rna-workbench"
           galaxy_admin_api_key: "ADMIN_API_KEY"
-          when: galaxy_flavor != 'galaxy-no-tools'
 ```
 
 License
