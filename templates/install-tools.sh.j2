@@ -28,14 +28,14 @@ function check_postgresql_vm {
     . /etc/os-release
     echo $ID
     if [ "$ID" = "ubuntu" ]; then
-      echo "[Ubuntu] Check postgresql."
+      echo "[Ubuntu][VM] Check postgresql."
       if [ "$VERSION_ID" = "16.04"]; then
         service start postgresql
       else
         systemctl start postgresql
       fi
     elif [ "$ID" = "centos" ]; then
-      echo "[EL] Check postgresql"
+      echo "[EL][VM] Check postgresql"
       systemctl start postgresql-9.6
     fi
   fi
@@ -47,11 +47,11 @@ function check_postgresql_docker {
     . /etc/os-release
     echo $ID
     if [ "$ID" = "ubuntu" ]; then
-      echo "[Ubuntu] Check postgresql."
+      echo "[Ubuntu][Docker] Check postgresql."
       service start postgresql
     elif [ "$ID" = "centos" ]; then
-      echo "[EL] Check postgresql"
-      /usr/pgsql-9.6/bin/postgres -D /var/lib/pgsql/9.6/data
+      echo "[EL][Docker] Check postgresql"
+      sudo -E -u postgres /usr/pgsql-9.6/bin/postgres -D /var/lib/pgsql/9.6/data
     fi
   fi
 
@@ -180,11 +180,11 @@ if [[ -r /etc/os-release ]]; then
   . /etc/os-release
   echo $ID
   if [ "$ID" = "ubuntu" ]; then
-    echo "[Ubuntu] Check postgresql."
+    echo "[Ubuntu][Docker] Stop postgresql."
     service stop postgresql
   elif [ "$ID" = "centos" ]; then
-    echo "[EL] Check postgresql"
-    /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data stop
+    echo "[EL][Docker] Stop postgresql"
+    sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data stop
   fi
 fi
 
