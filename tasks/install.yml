@@ -12,6 +12,9 @@
 
 - include: tools.yml
 
+- include: workflow_and_libraries_install.yml
+  when: install_workflows|bool or install_datalibraries|bool
+
 - name: Lock role
   template:
     src: 'indigo-dc.galaxycloud-tools.lock.j2'

@@ -40,11 +40,13 @@
   with_items: '{{ galaxy_tools_workflow_list_files }}'
   loop_control:
     loop_var: workflow_list_file
+  when: install_workflows|bool
 
 - include: install_datalibrary_list.yml
   with_items: '{{ galaxy_tools_datalibrary_list_files }}'
   loop_control:
     loop_var: datalibrary_list_file
+  when: install_datalibraries|bool
 
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
