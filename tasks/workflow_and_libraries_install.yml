@@ -1,0 +1,57 @@
+---
+- name: stop galaxy
+  supervisorctl: name="galaxy:" state=stopped
+  ignore_errors: yes
+
+- name: backup galaxy.ini
+  copy:
+    src: '{{galaxy_config_file}}'
+    dest: '{{galaxy_install_path}}/galaxy.prod.ini'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
+
+- name: edit galaxy.ini
+  ini_file:
+    dest: '{{ galaxy_config_file }}'
+    section: '{{ item.section }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+  with_items:
+    - { section: 'app:main', option: 'static_enabled', value: "True" }
+
+- name: Copy galaxy-startup-lite script
+  template:
+    src: 'galaxy-startup-lite.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
+    mode: a+x
+
+- name: Start Galaxy lite
+  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite start'
+
+- name: Create/invoke script virtualenv
+  pip:
+    name: '{{ item }}'
+    virtualenv: '{{ galaxy_tools_base_dir }}/venv'
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+  with_items:
+    - ephemeris
+
+- include: install_workflow_list.yml
+  with_items: '{{ galaxy_tools_workflow_list_files }}'
+  loop_control:
+    loop_var: workflow_list_file
+
+- include: install_datalibrary_list.yml
+  with_items: '{{ galaxy_tools_datalibrary_list_files }}'
+  loop_control:
+    loop_var: datalibrary_list_file
+
+- name: Stop Galaxy lite
+  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
+
+- name: restore galaxy.ini
+  copy:
+    src: '{{galaxy_install_path}}/galaxy.prod.ini'
+    dest: '{{galaxy_config_file}}'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
