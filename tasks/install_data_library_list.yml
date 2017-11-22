@@ -1,0 +1,4 @@
+---
+- name: 'Install {{galaxy_flavor}} data libraries'
+  command: '{{ galaxy_tools_base_dir }}/venv/bin/setup-data-libraries -i {{data_library_list_file}} -g http://localhost:8080 -a {{galaxy_admin_api_key}}'
+  notify: start galaxy

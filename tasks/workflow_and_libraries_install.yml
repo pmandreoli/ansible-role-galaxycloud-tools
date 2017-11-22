@@ -37,15 +37,15 @@
     - ephemeris
 
 - include: install_workflow_list.yml
-  with_items: '{{ galaxy_tools_workflow_list_files }}'
+  with_items: '{{ galaxy_tools_workflow_list_path }}'
   loop_control:
-    loop_var: workflow_list_file
+    loop_var: workflow_list_path
   when: install_workflows|bool
 
 - include: install_datalibrary_list.yml
-  with_items: '{{ galaxy_tools_datalibrary_list_files }}'
+  with_items: '{{ galaxy_tools_data_library_list_files }}'
   loop_control:
-    loop_var: datalibrary_list_file
+    loop_var: data_library_list_file
   when: install_data_libraries|bool
 
 - name: Stop Galaxy lite
