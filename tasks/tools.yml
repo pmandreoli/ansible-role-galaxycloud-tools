@@ -21,8 +21,6 @@
     dest: '{{galaxy_custom_script_path}}/install-tools'
     mode: a+x
 
-- include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
-
 - include: install_tool_list.yml
   with_items: '{{ galaxy_tools_tool_list_files }}'
   loop_control:
