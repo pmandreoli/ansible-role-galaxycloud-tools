@@ -46,7 +46,7 @@
   with_items: '{{ galaxy_tools_datalibrary_list_files }}'
   loop_control:
     loop_var: datalibrary_list_file
-  when: install_datalibraries|bool
+  when: install_data_libraries|bool
 
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'

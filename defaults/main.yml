@@ -51,4 +51,4 @@ galaxy_flavor: 'galaxy-no-tools'
 lock_file_path: '/var/run'
 
 install_workflows: false
-install_datalibraries: false
+install_data_libraries: false
