@@ -33,6 +33,7 @@
     name: '{{ item }}'
     virtualenv: '{{ galaxy_tools_base_dir }}/venv'
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    state: forcereinstall
   with_items:
     - ephemeris
 
@@ -42,7 +43,7 @@
     loop_var: workflow_list_path
   when: install_workflows|bool
 
-- include: install_datalibrary_list.yml
+- include: install_data_library_list.yml
   with_items: '{{ galaxy_tools_data_library_list_files }}'
   loop_control:
     loop_var: data_library_list_file
