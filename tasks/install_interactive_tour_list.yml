@@ -1,0 +1,7 @@
+---
+- name: 'Install {{galaxy_flavor}} insteractive tours'
+  copy:
+    src: '{{interactive_tour_list_path}}/'
+    dest: '{{galaxy_install_path}}/config/plugins/tours/'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'

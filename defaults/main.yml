@@ -52,3 +52,4 @@ lock_file_path: '/var/run'
 
 install_workflows: false
 install_data_libraries: false
+install_interactive_tours: false
