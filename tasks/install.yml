@@ -13,6 +13,9 @@
 
 - include: tools.yml
 
+- include: interactive_tours.yml
+  when: install_interactive_tours|bool
+
 - include: workflows_and_libraries.yml
   when: install_workflows|bool or install_data_libraries|bool
 
