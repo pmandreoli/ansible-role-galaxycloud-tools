@@ -1,5 +1,5 @@
 ---
 - include: install_insteractive_tour_list.yml
-  with_items: '{{ galaxy_tools_interactive_tour_path_list }}'
+  with_items: '{{galaxy_tools_interactive_tour_list_path}}'
   loop_control:
     loop_var: interactive_tour_list_path
