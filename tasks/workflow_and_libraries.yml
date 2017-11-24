@@ -55,7 +55,7 @@
 
 - name: restore galaxy.ini
   copy:
-    src: '{{galaxy_config_path}}/galaxy.prod.ini'
+    src: '{{galaxy_config_path}}/galaxy.ini.prod'
     dest: '{{galaxy_config_file}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
