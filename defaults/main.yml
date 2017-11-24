@@ -49,3 +49,6 @@ galaxy_flavor: 'galaxy-no-tools'
 # add lock file to avoid role re-run during recipe update.
 # to re-run the role remove the lock file {{lock_file_path}}/indigo-dc.galaxycloud-tools.lock
 lock_file_path: '/var/run'
+
+install_workflows: false
+install_data_libraries: false

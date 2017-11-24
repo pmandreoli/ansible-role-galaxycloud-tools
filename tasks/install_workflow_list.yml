@@ -1,0 +1,4 @@
+---
+- name: 'Install {{galaxy_flavor}} workflow'
+  command: '{{ galaxy_tools_base_dir }}/venv/bin/workflow-install --workflow_path {{workflow_list_path}}/ -g http://localhost:8080 -a {{galaxy_admin_api_key}}'
+  notify: start galaxy

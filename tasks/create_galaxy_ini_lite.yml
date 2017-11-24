@@ -1,0 +1,36 @@
+---
+- name: Create galaxy.ini file for lite start
+  copy:
+    src: '{{ galaxy_config_path }}/galaxy.ini.sample'
+    dest: '{{ galaxy_config_path }}/galaxy.ini.lite'
+    remote_src: true
+
+- name: Copy galaxy.ini read script
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: 'read_ini_file.py.j2', dest: '/tmp/read_ini_file.py' }
+
+- name: 'Get database_connection from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_file }} -s app:main -o database_connection'
+  register: galaxy_database_connection
+
+- name: 'Get install_database_connection from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_path }}/galaxy.ini.prod -s app:main -o install_database_connection'
+  register: galaxy_install_database_connection
+
+- name: 'Get admin_users from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_path }}/galaxy.ini.prod -s app:main -o admin_users'
+  register: galaxy_admin_users
+
+- name: edit galaxy.ini.lite
+  ini_file:
+    dest: '{{ galaxy_config_path}}/galaxy.ini.lite'
+    section: '{{ item.section }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+  with_items:
+    - { section: 'app:main', option: 'database_connection', value: '{{galaxy_database_connection.stdout}}' }
+    - { section: 'app:main', option: 'install_database_connection', value: '{{galaxy_install_database_connection.stdout}}' }
+    - { section: 'app:main', option: 'admin_users', value: '{{galaxy_admin_users.stdout}}' }

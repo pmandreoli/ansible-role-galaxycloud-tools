@@ -6,8 +6,15 @@
     clone: yes
     force: yes
     dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
+    version: devel
+
+- name: Include sources list
+  include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
 - include: tools.yml
+
+- include: workflow_and_libraries.yml
+  when: install_workflows|bool or install_data_libraries|bool
 
 - name: Lock role
   template:
