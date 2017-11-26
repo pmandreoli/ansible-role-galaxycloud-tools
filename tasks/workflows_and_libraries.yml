@@ -10,6 +10,7 @@
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
     remote_src: true
+    force: no # prevent galaxy.ini.prod be rewritten
 
 - include: create_galaxy_ini_lite.yml 
 
