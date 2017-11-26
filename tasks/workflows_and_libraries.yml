@@ -9,9 +9,9 @@
     dest: '{{galaxy_config_path}}/galaxy.ini.prod'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
+    remote_src: true
 
 - include: create_galaxy_ini_lite.yml 
-
 
 - name: Move to lite galaxy.ini file
   copy:
@@ -19,6 +19,7 @@
     dest: '{{galaxy_config_file}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
+    remote_src: true
 
 - name: Copy galaxy-startup-lite script
   template:
@@ -59,3 +60,4 @@
     dest: '{{galaxy_config_file}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
+    remote_src: true
