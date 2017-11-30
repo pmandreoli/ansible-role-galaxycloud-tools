@@ -21,6 +21,8 @@
     dest: '{{galaxy_custom_script_path}}/install-tools'
     mode: a+x
 
+- include: get_conda.yml
+
 - include: install_tool_list.yml
   with_items: '{{ galaxy_tools_tool_list_files }}'
   loop_control:
