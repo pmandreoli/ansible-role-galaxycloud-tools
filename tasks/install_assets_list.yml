@@ -1,2 +1,3 @@
 ---
-- include: '{{asset_recipe}}' 
+- include: '{{asset_recipe}}'
+  notify: start galaxy 
