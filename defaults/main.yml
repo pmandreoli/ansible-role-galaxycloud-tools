@@ -53,3 +53,9 @@ lock_file_path: '/var/run'
 install_workflows: false
 install_data_libraries: false
 install_interactive_tours: false
+
+# add custom resources (i.e. visualisations plugins, custom web pages, etc.).
+# since there is no a standard way to retrieve and install
+# visualisation plugin, we keep this recipes external
+# and implement a common interface to insall these resources.
+add_more_assets: false
