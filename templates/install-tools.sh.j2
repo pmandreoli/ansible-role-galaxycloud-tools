@@ -66,11 +66,11 @@ function check_postgresql {
 {% endif %}
 
   # wait for database to finish starting up
-  STATUS=$(psql 2>&1)
+  STATUS=$(sudo -E -u postgres psql 2>&1)
   while [[ ${STATUS} =~ "starting up" ]]
   do
     echo "waiting for database: $STATUS"
-    STATUS=$(psql 2>&1)
+    STATUS=$(sudo -E -u postgres psql 2>&1)
     sleep 1
   done
 }
