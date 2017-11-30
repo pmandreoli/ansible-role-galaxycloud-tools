@@ -1,7 +1,6 @@
 ---
 - name: 'Install {{galaxy_flavor}} Shed tools. Log file available to /tmp/galaxy_tool_install.log'
-  #command: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}}'
-  shell: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}} >> /tmp/test.log'
+  command: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}}'
   notify: start galaxy
 
 - name: Clean Conda tarballs

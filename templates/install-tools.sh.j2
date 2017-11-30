@@ -66,7 +66,6 @@ function check_postgresql {
 {% endif %}
 
   # wait for database to finish starting up
-  echo 'wait for database to finish starting up'
   STATUS=$(sudo -E -u postgres psql 2>&1)
   while [[ ${STATUS} =~ "starting up" ]]
   do
@@ -75,8 +74,6 @@ function check_postgresql {
     sleep 1
   done
 }
-
-echo 'stiamo qua'
 
 #________________________________
 # Install lsof
