@@ -53,3 +53,6 @@ lock_file_path: '/var/run'
 install_workflows: false
 install_data_libraries: false
 install_interactive_tours: false
+
+# add custom resources (i.e. visualisations plugins, custom web pages, etc.).
+add_more_assets: false
