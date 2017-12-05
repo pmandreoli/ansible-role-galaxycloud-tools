@@ -1,0 +1,31 @@
+---
+# Install rsync
+- nacme: '[EL] Install rsync'
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - rsync
+  when: ansible_os_family == "RedHat"
+
+- name: '[Ubuntu] Install rsync'
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - rsync
+  when: ansible_os_family == "Debian"
+
+# move data libraries
+- name: Move _conda
+  syncronize:
+    src: '{{galaxy_install_path}}/database/files/'
+    dest: '{{export_dir}}/galaxy/database/files/'
+  become_user: '{{galaxy_user}}'
+  become: true
+
+# remove unuseful libs
+- name: Remove old tool_deps
+  file:
+    dest: '{{galaxy_install_path}}/database/'
+    state: absent

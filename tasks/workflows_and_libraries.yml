@@ -55,10 +55,7 @@
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
 
-- name: Move libraries
-  command: 'mv {{galaxy_install_path}}/database/files/* {{export_dir}}/galaxy/database/files/'
-  become_user: '{{galaxy_user}}'
-  become: yes
+- inclide: move_libraries.yml
 
 - name: restore galaxy.ini
   copy:
