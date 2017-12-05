@@ -17,8 +17,8 @@
   when: ansible_os_family == "Debian"
 
 # move data libraries
-- name: Move _conda
-  syncronize:
+- name: Move libraries
+  synchronize:
     src: '{{galaxy_install_path}}/database/files/'
     dest: '{{export_dir}}/galaxy/database/files/'
   become_user: '{{galaxy_user}}'
