@@ -1,6 +1,6 @@
 ---
 # Install rsync
-- nacme: '[EL] Install rsync'
+- name: '[EL] Install rsync'
   yum:
     name: '{{ item }}'
     state: present
