@@ -54,6 +54,24 @@ install_workflows: false
 install_data_libraries: false
 install_interactive_tours: false
 
+# Galaxy userdata are stored here
+export_dir: "/export"
+
+# This role exploits a lite version of galaxy to install data-libraries.
+# It install dataset in /home/galaxy/galaxy/database/files/000 by defaults. 
+# If the default galaxy database directory is different you have two options.
+# By default the role read galaxy.ini and move datasets to file_path dir:
+# move_datasets: true
+# set_dataset_dest_dir: false
+#
+# Otherwise you can set the destination directory.
+# move_datasets: true
+# set_dataset_dest_dir: true
+# dataset_dest_dir: '/path/to/dir'
+move_datasets: true
+set_dataset_dest_dir: false
+dataset_dest_dir: '{{export_dir}}/galaxy/database/files/000/'
+
 # add custom resources (i.e. visualisations plugins, custom web pages, etc.).
 # since there is no a standard way to retrieve and install
 # visualisation plugin, we keep this recipes external
