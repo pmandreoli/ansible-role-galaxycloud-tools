@@ -76,13 +76,12 @@ Otherwise you can set the destination directory. Dataset_dest_dir must exist, si
      set_dataset_dest_dir: true
      dataset_dest_dir: '/path/to/dir'
 ```
+Defaults values:
+``move_datasets``:``true``
+``set_dataset_dest_dir:``true``
+``dataset_dest_dir``:``/path/to/dir``
 
-``add_more_assets: add custom resources (i.e. visualisations plugins, custom web pages, etc.). Since there is no a standard way to retrieve and install visualisation plugin, we keep this recipes external and implement a common interface to insall these resources (default: ``false``).
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+``add_more_assets``: add custom resources (i.e. visualisations plugins, custom web pages, etc.). Since there is no a standard way to retrieve and install visualisation plugin, we keep this recipes external and implement a common interface to insall these resources (default: ``false``).
 
 Example Playbook
 ----------------
@@ -101,9 +100,4 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Apache Licence v2
