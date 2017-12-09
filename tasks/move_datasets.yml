@@ -22,7 +22,7 @@
   register: register_file_path
   when: not set_dataset_dest_dir|bool
 
-- name: Move datasets to file_path directory from galaxy.ini.prod
+- name: 'Move datasets to file_path directory from galaxy.ini.prod {{register_file_path.stdout}}'
   synchronize:
     src: '{{galaxy_install_path}}/database/files/'
     dest: '{{register_file_path.stdout}}'
@@ -31,7 +31,7 @@
   become: true
 
 # move datasets to a destination directory
-- name: Move datasets to custom diresctory
+- name: 'Move datasets to custom diresctory {{dataset_dest_dir}}'
   synchronize:
     src: '{{galaxy_install_path}}/database/files/'
     dest: '{{dataset_dest_dir}}'
