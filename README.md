@@ -1,7 +1,11 @@
 indigo-dc.galaxycloud-tools
 ===========================
 
-Install Galaxy tools from ToolShed. The role use the path scheme from the role indigo-dc.galaxycloud 
+This Ansible role is for automated installation of tools from a Tool Shed into Galaxy. The role use the path scheme from the role indigo-dc.galaxycloud
+
+When run, this role will create a virtual environment, install ephemeris and invoke the install script to tools into Galaxy. The script stop Galaxy (if running), start a local Galaxy instance on http://localhost:8080 and install tools.
+
+The list of tools to install is provided in files/tool_list.yaml file, hosted on an external repository: https://github.com/indigo-dc/Galaxy-flavors-recipes.
 
 Requirements
 ------------
