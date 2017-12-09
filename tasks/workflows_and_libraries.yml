@@ -55,8 +55,6 @@
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
 
-- include: move_libraries.yml
-
 - name: restore galaxy.ini
   copy:
     src: '{{galaxy_config_path}}/galaxy.ini.prod'

@@ -70,7 +70,7 @@ export_dir: "/export"
 # dataset_dest_dir: '/path/to/dir'
 move_datasets: true
 set_dataset_dest_dir: false
-dataset_dest_dir: '{{export_dir}}/galaxy/database/files/000/'
+dataset_dest_dir: '{{export_dir}}/galaxy/database/files/'
 
 # add custom resources (i.e. visualisations plugins, custom web pages, etc.).
 # since there is no a standard way to retrieve and install
