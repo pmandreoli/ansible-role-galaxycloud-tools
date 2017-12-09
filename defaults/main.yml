@@ -65,6 +65,7 @@ export_dir: "/export"
 # set_dataset_dest_dir: false
 #
 # Otherwise you can set the destination directory.
+# dataset_dest_dir must exist, since the role will not create it.
 # move_datasets: true
 # set_dataset_dest_dir: true
 # dataset_dest_dir: '/path/to/dir'
