@@ -18,9 +18,6 @@
 - include: workflows_and_libraries.yml
   when: install_workflows|bool or install_data_libraries|bool
 
-- include: move_datasets.yml
-  when: move_datasets|bool
-
 - include: assets.yml
   when: add_more_assets|bool
 
