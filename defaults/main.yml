@@ -46,6 +46,20 @@ galaxy_tools_base_dir: '/tmp'
 
 galaxy_flavor: 'galaxy-no-tools'
 
+# Create bootstrap user
+# if an apy key is not present on galaxy, a new user is created to istall tools and removed.
+# This is a very basi implementation. Advanced one is located here: https://raw.githubusercontent.com/indigo-dc/ansible-galaxy-tools/master/files/manage_bootstrap_user.py
+# Currently, to create it, few informations are needed:
+# galaxy installation path
+# galaxy_database_connection
+# and pbkdf2 enabled
+create_bootstrap_user: false
+galaxy_database_connection: 'postgresql://galaxy:galaxy@localhost:5432/galaxy'
+if_pbkdf2: true
+bootstrap_user_mail: 'admin@server.com'
+bootstrap_user_name: 'admin'
+bootstrap_user_password: 'password'
+
 # add lock file to avoid role re-run during recipe update.
 # to re-run the role remove the lock file {{lock_file_path}}/indigo-dc.galaxycloud-tools.lock
 lock_file_path: '/var/run'
