@@ -6,6 +6,8 @@
   with_items:
     - { src: 'create_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/create_galaxy_user.py' }
     - { src: 'delete_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/delete_galaxy_user.py' }
+  become_user: root
+  become_method: sudo
 
 - name: Create Galaxy bootstrap user
   command: >

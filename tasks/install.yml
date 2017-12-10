@@ -12,6 +12,8 @@
 
 - include: create_bootstrap_user.yml
   when: create_bootstrap_user|bool
+  become_user: '{{galaxy_user}}'
+  become: yes
 
 - include: tools.yml
 
@@ -26,6 +28,8 @@
 
 - include: delete_bootstrap_user.yml
   when: create_bootstrap_user|bool
+  become_user: '{{galaxy_user}}'
+  become: yes
 
 - name: Lock role
   template:
