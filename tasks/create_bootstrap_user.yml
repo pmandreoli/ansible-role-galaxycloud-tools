@@ -17,9 +17,6 @@
     --username {{bootstrap_user_name}}
     -c {{galaxy_config_file}}
     --key {{galaxy_admin_api_key}}
-  environment:
-    PYTHONPATH: "{{ galaxy_install_path }}/lib"
-    VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
 - name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
