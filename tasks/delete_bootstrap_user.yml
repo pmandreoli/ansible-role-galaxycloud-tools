@@ -1,7 +1,7 @@
 ---
 - name: Delete bootstrap user
   command: >
-    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_scipt_path}}/delete_galaxy_user.py
+    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/delete_galaxy_user.py
     --user {{bootstrap_user_mail}}
 
 - name: Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file
