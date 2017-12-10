@@ -55,7 +55,7 @@ galaxy_flavor: 'galaxy-no-tools'
 # and pbkdf2 enabled
 create_bootstrap_user: false
 galaxy_database_connection: 'postgresql://galaxy:galaxy@localhost:5432/galaxy'
-if_pbkdf2: true
+use_pbkdf2: true
 bootstrap_user_mail: 'admin@server.com'
 bootstrap_user_name: 'admin'
 bootstrap_user_password: 'password'
