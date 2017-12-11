@@ -6,8 +6,18 @@
   with_items:
     - { src: 'create_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/create_galaxy_user.py' }
     - { src: 'delete_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/delete_galaxy_user.py' }
+    - { src: 'pwd_generator.j2', dest: '{{ galaxy_custom_script_path }}/pwd-generator' }
   become_user: root
   become_method: sudo
+
+- name: Generate random api key
+  command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
+  register: galaxy_id_secret
+
+- set_fact:
+    galaxy_admin_api_key: '{{galaxy_id_secret.stdout}}'
+
+- shell: 'echo {{galaxy_admin_api_key}} >> /tmp/key.log'
 
 - name: Create Galaxy bootstrap user
   command: >
@@ -17,6 +27,8 @@
     --username {{bootstrap_user_name}}
     -c {{galaxy_config_file}}
     --key {{galaxy_admin_api_key}}
+  environment:
+    VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
 - name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
