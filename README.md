@@ -90,7 +90,7 @@ Defaults values:
 
 ``add_more_assets``: add custom resources (i.e. visualisations plugins, custom web pages, etc.). Since there is no a standard way to retrieve and install visualisation plugin, we keep this recipes external and implement a common interface to insall these resources (default: ``false``).
 
-Create bootstrap user
+###Create bootstrap user###
 
 if an apy key is not present on galaxy, a new user is created to istall tools and removed.
 This is a very basic implementation. Advanced one is located here: https://raw.githubusercontent.com/indigo-dc/ansible-galaxy-tools/master/files/manage_bootstrap_user.py
