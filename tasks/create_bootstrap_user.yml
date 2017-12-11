@@ -13,12 +13,14 @@
 - name: Generate random api key
   command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
   register: galaxy_id_secret
+  when: create_random_api_key|bool
 
 - set_fact:
     galaxy_admin_api_key: '{{galaxy_id_secret.stdout}}'
+  when: create_random_api_key|bool
 
 - shell: 'echo {{galaxy_admin_api_key}} >> /tmp/key.log'
-
+  
 - name: Create Galaxy bootstrap user
   command: >
     chdir={{ galaxy_install_path }} {{ galaxy_venv_path }}/bin/python {{ galaxy_custom_script_path }}/create_galaxy_user.py

@@ -59,6 +59,7 @@ use_pbkdf2: true
 bootstrap_user_mail: 'admin@server.com'
 bootstrap_user_name: 'admin'
 bootstrap_user_password: 'password'
+create_random_api_key: true
 
 # add lock file to avoid role re-run during recipe update.
 # to re-run the role remove the lock file {{lock_file_path}}/indigo-dc.galaxycloud-tools.lock
