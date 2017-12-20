@@ -1,0 +1,45 @@
+---
+# Install rsync
+- name: '[EL] Install rsync'
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - rsync
+  when: ansible_os_family == "RedHat"
+
+- name: '[Ubuntu] Install rsync'
+  apt:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - rsync
+  when: ansible_os_family == "Debian"
+
+# default: get file_path set and move there datasets
+- name: 'Get tool dependency directory path from {{ galaxy_config_path }}/galaxy.ini.prod'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_path }}/galaxy.ini.prod -s app:main -o file_path'
+  register: register_file_path
+  when: not set_dataset_dest_dir|bool
+
+- name: 'Move datasets to file_path directory from galaxy.ini.prod to {{register_file_path.stdout}}'
+  synchronize:
+    src: '{{galaxy_install_path}}/database/files/'
+    dest: '{{register_file_path.stdout}}'
+  when: not set_dataset_dest_dir|bool
+  become_user: '{{galaxy_user}}'
+  become: true
+
+# move datasets to a destination directory
+- name: 'Move datasets to custom directory {{dataset_dest_dir}}'
+  synchronize:
+    src: '{{galaxy_install_path}}/database/files/'
+    dest: '{{dataset_dest_dir}}'
+  when: set_dataset_dest_dir|bool
+  become_user: '{{galaxy_user}}'
+  become: true
+
+- name: Remove unuseful datasets
+  file:
+    dest: '{{galaxy_install_path}}/database/'
+    state: absent

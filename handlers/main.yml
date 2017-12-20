@@ -8,3 +8,4 @@
 - name: start galaxy
   command: "{{ galaxy_custom_script_path }}/galaxyctl start galaxy --force"
   ignore_errors: yes
+  when: ansible_virtualization_type != "docker"

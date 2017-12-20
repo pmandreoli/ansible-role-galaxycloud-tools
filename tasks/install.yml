@@ -10,6 +10,11 @@
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
+- include: create_bootstrap_user.yml
+  when: create_bootstrap_user|bool
+  become_user: '{{galaxy_user}}'
+  become: yes
+
 - include: tools.yml
 
 - include: interactive_tours.yml
@@ -20,6 +25,11 @@
 
 - include: assets.yml
   when: add_more_assets|bool
+
+- include: delete_bootstrap_user.yml
+  when: create_bootstrap_user|bool
+  become_user: '{{galaxy_user}}'
+  become: yes
 
 - name: Lock role
   template:

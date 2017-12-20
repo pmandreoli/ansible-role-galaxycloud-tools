@@ -1,0 +1,43 @@
+---
+- name: 'Copy create/delete user script to {{ galaxy_custom_script_path }}'
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: 'create_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/create_galaxy_user.py' }
+    - { src: 'delete_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/delete_galaxy_user.py' }
+    - { src: 'pwd_generator.j2', dest: '{{ galaxy_custom_script_path }}/pwd-generator' }
+  become_user: root
+  become_method: sudo
+
+- name: Generate random api key
+  command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
+  register: galaxy_id_secret
+  when: create_random_api_key|bool
+
+- set_fact:
+    galaxy_admin_api_key: '{{galaxy_id_secret.stdout}}'
+  when: create_random_api_key|bool
+
+- name: Create Galaxy bootstrap user
+  command: >
+    chdir={{ galaxy_install_path }} {{ galaxy_venv_path }}/bin/python {{ galaxy_custom_script_path }}/create_galaxy_user.py
+    --user {{bootstrap_user_mail}}
+    --password {{bootstrap_user_password}}
+    --username {{bootstrap_user_name}}
+    -c {{galaxy_config_file}}
+    --key {{galaxy_admin_api_key}}
+  environment:
+    VIRTUAL_ENV: "{{ galaxy_venv_path }}"
+
+- name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
+  replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
+  register: admin_users_found
+
+- name: Set bootstrap user as Galaxy admin
+  ini_file:
+    dest: '{{ galaxy_config_file }}'
+    section: 'app:main'
+    option: 'admin_users'
+    value: '{{bootstrap_user_mail}}'
+  when: admin_users_found.msg == ""

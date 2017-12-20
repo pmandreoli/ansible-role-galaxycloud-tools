@@ -51,7 +51,7 @@ function check_postgresql_docker {
       service start postgresql
     elif [ "$ID" = "centos" ]; then
       echo "[EL][Docker] Check postgresql"
-      sudo -E -u postgres /usr/pgsql-9.6/bin/postgres -D /var/lib/pgsql/9.6/data
+      sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data -w start
     fi
   fi
 
@@ -66,11 +66,11 @@ function check_postgresql {
 {% endif %}
 
   # wait for database to finish starting up
-  STATUS=$(psql 2>&1)
+  STATUS=$(sudo -E -u postgres psql 2>&1)
   while [[ ${STATUS} =~ "starting up" ]]
   do
     echo "waiting for database: $STATUS"
-    STATUS=$(psql 2>&1)
+    STATUS=$(sudo -E -u postgres psql 2>&1)
     sleep 1
   done
 }
