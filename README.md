@@ -128,6 +128,18 @@ Including an example of how to use your role (for instance, with variables passe
           when: galaxy_flavor != "galaxy-no-tools"
 ```
 
+To install tools without moving them to ``export_dir``:
+
+```yaml
+    - hosts: server
+      roles:
+        - role: indigo-dc.galaxycloud-tools
+          galaxy_flavor: 'galaxy-rna-workbench'
+          move_datasets: false
+          create_bootstrap_user: true
+          when: galaxy_flavor != 'galaxy-no-tools'
+```
+
 License
 -------
 
