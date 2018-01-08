@@ -61,12 +61,30 @@ function check_postgresql_vm {
 }
 
 function check_postgresql_docker {
-  supervisorctl start postgresql
+
+  if [[ -r /etc/os-release ]]; then
+    . /etc/os-release
+    echo $ID
+    if [ "$ID" = "ubuntu" ]; then
+      echo "[Ubuntu][Docker] Check postgresql."
+      service start postgresql
+    elif [ "$ID" = "centos" ]; then
+      echo "[EL][Docker] Check postgresql"
+      if [ ! -f /var/lib/pgsql/9.6/data/postmaster.pid ]; then
+        sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data -w start
+      fi
+    fi
+  fi
+
 }
 
 function check_postgresql {
 
-  check_postgresql_vm # selection between vm and docker will be done at ansible level.
+{% if ansible_virtualization_type == "docker" %}
+  check_postgresql_docker
+{% else %}
+  check_postgresql_vm
+{% endif %}
 
   # wait for database to finish starting up
   STATUS=$(psql 2>&1)
@@ -160,6 +178,21 @@ function galaxy_start {
 function galaxy_stop {
   echo "stopping Galaxy"
   sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop-daemon --skip-eggs --skip-wheels --log-file=$install_log --pid-file=$install_pidfile
+
+{% if ansible_virtualization_type == "docker" %}
+# stop postgresql on docker. Keep it running on vm
+if [[ -r /etc/os-release ]]; then
+  . /etc/os-release
+  echo $ID
+  if [ "$ID" = "ubuntu" ]; then
+    echo "[Ubuntu][Docker] Stop postgresql."
+    service stop postgresql
+  elif [ "$ID" = "centos" ]; then
+    echo "[EL][Docker] Stop postgresql"
+    sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data stop
+  fi
+fi
+{% endif %}
 
   echo "uset all variables"
   unset GALAXY_CONFIG_STATIC_ENABLED
