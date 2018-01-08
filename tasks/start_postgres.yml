@@ -33,7 +33,8 @@
   shell: '/etc/init.d/postgresql start'
   when:
     - ansible_virtualization_type == "docker"
-    - ansible_os_family == "Debian"!
+    - ansible_os_family == "Debian"
+
 - name: '[VM] Enable and start PostgreSQL server'
   service:
     name: '{{ postgresql_service_name }}'
