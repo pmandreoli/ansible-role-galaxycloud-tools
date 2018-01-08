@@ -6,6 +6,7 @@
     clone: yes
     force: yes
     dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
+    version: '{{ Galaxy_flavor_recipe_branch }}'
 
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'

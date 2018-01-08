@@ -46,6 +46,9 @@ galaxy_tools_base_dir: '/tmp'
 
 galaxy_flavor: 'galaxy-no-tools'
 
+# Set Galaxy flavor recipes branch: https://github.com/indigo-dc/Galaxy-flavors-recipes
+Galaxy_flavor_recipe_branch: 'master'
+
 # Create bootstrap user
 # if an apy key is not present on galaxy, a new user is created to istall tools and removed.
 # This is a very basic implementation. Advanced one is located here: https://raw.githubusercontent.com/indigo-dc/ansible-galaxy-tools/master/files/manage_bootstrap_user.py
