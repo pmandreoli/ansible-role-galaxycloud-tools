@@ -19,6 +19,8 @@ GALAXY_USER='{{galaxy_user}}'
 now=$(date +"%b-%d-%y-%H%M%S")
 install_log="/var/log/galaxy/galaxy_tools_install_$now.log"
 install_pidfile='/var/log/galaxy/galaxy_tools_install.pid'
+#---
+ephemeris_version='{{ephemeris_version}}'
 
 #________________________________
 function check_postgresql_vm {
@@ -104,7 +106,7 @@ function install_ephemeris {
   virtualenv /tmp/tools_venv
   source /tmp/tools_venv/bin/activate
   echo "Install ephemeris using pip in the clean environment"
-  pip install ephemeris
+  pip install ephemeris==$ephemeris_version
 }
 
 #________________________________
@@ -162,7 +164,7 @@ done
 # install tools
 install_ephemeris
 
-shed-install -g "http://localhost:$PORT" -a $1 -t "$2"
+shed-tools -g "http://localhost:$PORT" -a $1 -t "$2"
 
 exit_code=$?
 
