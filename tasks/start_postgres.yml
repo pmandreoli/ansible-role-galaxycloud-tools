@@ -1,6 +1,7 @@
 ---
 - set_fact:
     postgresql_version: '9.6'
+    galaxy_db_port: '5432'
 
 - name: '[EL] Set Postgresql fact'
   set_fact:
