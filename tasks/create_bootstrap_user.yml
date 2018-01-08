@@ -1,4 +1,6 @@
 ---
+- include: start_postgres.yml
+
 - name: 'Copy create/delete user script to {{ galaxy_custom_script_path }}'
   template:
     src: '{{ item.src }}'

@@ -16,3 +16,5 @@
     regexp: 'admin_users = {{bootstrap_user_mail}}'
     replace: '#admin_users = None'
   when: admin_users_found.msg == ""
+
+- include: stop_postgres.yml

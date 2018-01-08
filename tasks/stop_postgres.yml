@@ -1,0 +1,22 @@
+---
+- name: '[EL] [Docker] Stop PostgreSQL server'
+  shell: '/usr/pgsql-{{ postgresql_version }}/bin/pg_ctl -D {{ postgresql_pgdata }} stop'
+  become: yes
+  become_user: postgres
+  when:
+    - ansible_virtualization_type == "docker"
+    - ansible_os_family == "RedHat"
+
+- name: '[Ubuntu] [Docker] Stop PostgreSQL server'
+  shell: '/etc/init.d/postgresql stop'
+  become_user: root
+  become_method: sudo
+  when:
+    - ansible_virtualization_type == "docker"
+    - ansible_os_family == "Debian"
+
+- name: '[VM] Stop PostgreSQL server'
+  service:
+    name: '{{ postgresql_service_name }}'
+    state: stopped
+   when: ansible_virtualization_type != "docker"
