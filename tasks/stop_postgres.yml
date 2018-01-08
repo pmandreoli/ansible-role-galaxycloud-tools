@@ -19,4 +19,4 @@
   service:
     name: '{{ postgresql_service_name }}'
     state: stopped
-   when: ansible_virtualization_type != "docker"
+  when: ansible_virtualization_type != "docker"
