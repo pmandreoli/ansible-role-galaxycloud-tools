@@ -36,7 +36,7 @@
     - ansible_virtualization_type == "docker"
     - ansible_os_family == "Debian"
 
-- name: '[VM] Enable and start PostgreSQL server'
+- name: '[VM] Start PostgreSQL server'
   service:
     name: '{{ postgresql_service_name }}'
     state: started
