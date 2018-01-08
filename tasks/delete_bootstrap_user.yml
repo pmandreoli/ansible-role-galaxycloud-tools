@@ -18,3 +18,5 @@
   when: admin_users_found.msg == ""
 
 - include: stop_postgres.yml
+  become_user: root
+  become_method: sudo

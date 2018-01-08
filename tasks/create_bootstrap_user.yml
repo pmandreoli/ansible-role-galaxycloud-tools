@@ -1,5 +1,7 @@
 ---
 - include: start_postgres.yml
+  become_user: root
+  become_method: sudo
 
 - name: 'Copy create/delete user script to {{ galaxy_custom_script_path }}'
   template:
