@@ -16,16 +16,16 @@
   become_user: '{{galaxy_user}}'
   become: yes
 
-- include: tools.yml
+#- include: tools.yml
 
-- include: interactive_tours.yml
-  when: install_interactive_tours|bool
+#- include: interactive_tours.yml
+#  when: install_interactive_tours|bool
 
-- include: workflows_and_libraries.yml
-  when: install_workflows|bool or install_data_libraries|bool
+#- include: workflows_and_libraries.yml
+#  when: install_workflows|bool or install_data_libraries|bool
 
-- include: assets.yml
-  when: add_more_assets|bool
+#- include: assets.yml
+#  when: add_more_assets|bool
 
 - include: delete_bootstrap_user.yml
   when: create_bootstrap_user|bool
