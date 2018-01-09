@@ -40,11 +40,16 @@
   with_items:
     - ephemeris
 
+# If the bootstrap user is used, it will be deleted.
+# Workflows are installed at user level and will be deleted, too.
+# So we skip workflow installation.
 - include: install_workflow_list.yml
   with_items: '{{ galaxy_tools_workflow_list_path }}'
   loop_control:
     loop_var: workflow_list_path
-  when: install_workflows|bool
+  when:
+    - install_workflows|bool
+    - not create_bootstrap_user|bool
 
 - include: install_data_library_list.yml
   with_items: '{{ galaxy_tools_data_library_list_files }}'
