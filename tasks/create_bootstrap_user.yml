@@ -45,3 +45,7 @@
     option: 'admin_users'
     value: '{{bootstrap_user_mail}}'
   when: admin_users_found.msg == ""
+
+- include: stop_postgres.yml
+  become_user: root
+  become_method: sudo
