@@ -53,7 +53,8 @@ function check_postgresql_docker {
       service start postgresql
     elif [ "$ID" = "centos" ]; then
       echo "[EL][Docker] Check postgresql"
-      if [ ! -f /var/lib/pgsql/9.6/data/postmaster.pid ]; then
+      if [[ ! -f /var/lib/pgsql/9.6/data/postmaster.pid ]]; then
+        echo "Starting postgres on centos"
         sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data -w start
       fi
     fi
