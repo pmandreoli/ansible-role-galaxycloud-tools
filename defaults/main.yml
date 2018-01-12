@@ -49,7 +49,7 @@ galaxy_flavor: 'galaxy-no-tools'
 # Set Galaxy flavor recipes branch: https://github.com/indigo-dc/Galaxy-flavors-recipes
 Galaxy_flavor_recipe_branch: 'master'
 
-# Set Ephemeris version
+# Set Ephemeris version and path
 tools_venv_dir: '/tmp/tools_venv'
 ephemeris_version: '0.7.0'
 
