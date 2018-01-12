@@ -100,3 +100,8 @@ dataset_dest_dir: '{{export_dir}}/galaxy/database/files/'
 # visualisation plugin, we keep this recipes external
 # and implement a common interface to insall these resources.
 add_more_assets: false
+
+#______________________________________
+# Inform the role if galaxy tools and reference data will be installed
+# If yes, galaxy is not started
+get_refdata: false
