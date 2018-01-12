@@ -34,7 +34,7 @@
 - name: Create/invoke script virtualenv
   pip:
     name: '{{ item }}'
-    virtualenv: '{{ tools_env_dir }}'
+    virtualenv: '{{ tools_venv_dir }}'
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
     state: forcereinstall
   with_items:
