@@ -23,18 +23,14 @@
   when: not set_dataset_dest_dir|bool
 
 - name: 'Move datasets to file_path directory from galaxy.ini.prod to {{register_file_path.stdout}}'
-  synchronize:
-    src: '{{galaxy_install_path}}/database/files/'
-    dest: '{{register_file_path.stdout}}'
+  shell: 'rsync -av {{galaxy_install_path}}/database/files/ {{register_file_path.stdout}} > /tmp/move_datasets_rsync.log'
   when: not set_dataset_dest_dir|bool
   become_user: '{{galaxy_user}}'
   become: true
 
 # move datasets to a destination directory
 - name: 'Move datasets to custom directory {{dataset_dest_dir}}'
-  synchronize:
-    src: '{{galaxy_install_path}}/database/files/'
-    dest: '{{dataset_dest_dir}}'
+  shell: 'rsync -av {{galaxy_install_path}}/database/files/ {{dataset_dest_dir}} > /tmp/move_datasets_rsync.log'
   when: set_dataset_dest_dir|bool
   become_user: '{{galaxy_user}}'
   become: true
