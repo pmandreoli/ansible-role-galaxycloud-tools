@@ -50,7 +50,7 @@ galaxy_flavor: 'galaxy-no-tools'
 Galaxy_flavor_recipe_branch: 'master'
 
 # Set Ephemeris version
-tools_env_dir: '/tmp/tools_env'
+tools_env_dir: '/tmp/tools_venv'
 ephemeris_version: '0.7.0'
 
 # Create bootstrap user
