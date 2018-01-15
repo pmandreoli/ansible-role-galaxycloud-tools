@@ -1,4 +1,8 @@
 ---
+- include: start_postgres.yml
+  become_user: root
+  become_method: sudo
+
 - name: Delete bootstrap user
   command: >
     chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/delete_galaxy_user.py
@@ -16,3 +20,7 @@
     regexp: 'admin_users = {{bootstrap_user_mail}}'
     replace: '#admin_users = None'
   when: admin_users_found.msg == ""
+
+- include: stop_postgres.yml
+  become_user: root
+  become_method: sudo

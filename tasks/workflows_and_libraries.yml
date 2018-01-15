@@ -34,23 +34,30 @@
 - name: Create/invoke script virtualenv
   pip:
     name: '{{ item }}'
-    virtualenv: '{{ galaxy_tools_base_dir }}/venv'
+    virtualenv: '{{ tools_venv_dir }}'
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
     state: forcereinstall
   with_items:
-    - ephemeris
+    - ephemeris=={{ephemeris_version}}
 
+# If the bootstrap user is used, it will be deleted.
+# Workflows are installed at user level and will be deleted, too.
+# So we skip workflow installation.
 - include: install_workflow_list.yml
   with_items: '{{ galaxy_tools_workflow_list_path }}'
   loop_control:
     loop_var: workflow_list_path
-  when: install_workflows|bool
+  when:
+    - install_workflows|bool
+    - not create_bootstrap_user|bool
 
 - include: install_data_library_list.yml
   with_items: '{{ galaxy_tools_data_library_list_files }}'
   loop_control:
     loop_var: data_library_list_file
-  when: install_data_libraries|bool
+  when:
+    - install_data_libraries|bool
+    - not create_bootstrap_user|bool
 
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'

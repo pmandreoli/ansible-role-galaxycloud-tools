@@ -1,11 +1,18 @@
 ---
-# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in /tmp
+# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
+
+- name: 'Create {{ galaxy_tools_base_dir }}'
+  file:
+    path: '{{ galaxy_tools_base_dir }}'
+    state: directory
+
 - name: Get Galaxy flavor recipes
   git:
     repo: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
     clone: yes
     force: yes
     dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
+    version: '{{ Galaxy_flavor_recipe_branch }}'
 
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'

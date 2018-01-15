@@ -2,10 +2,10 @@
 # handlers file for ansible-role-galaxycloud-tools
 
 - name: restart galaxy
-  command: "{{ galaxy_custom_script_path }}/galaxyctl restart galaxy --force"
+  command: "/usr/bin/galaxyctl restart galaxy --force"
   ignore_errors: yes
 
 - name: start galaxy
-  command: "{{ galaxy_custom_script_path }}/galaxyctl start galaxy --force"
+  command: "/usr/bin/galaxyctl start galaxy --force"
   ignore_errors: yes
   when: ansible_virtualization_type != "docker"

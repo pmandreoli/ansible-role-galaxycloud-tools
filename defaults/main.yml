@@ -42,9 +42,16 @@ galaxy_admin_api_key: "GALAXY_ADMIN_API_KEY"
 # file for more about the format requirements of this file. The file names must be unique.
 galaxy_tools_tool_list_files: [ "tool_list.yaml" ]
 
-galaxy_tools_base_dir: '/tmp'
+galaxy_tools_base_dir: '/data'
 
 galaxy_flavor: 'galaxy-no-tools'
+
+# Set Galaxy flavor recipes branch: https://github.com/indigo-dc/Galaxy-flavors-recipes
+Galaxy_flavor_recipe_branch: 'master'
+
+# Set Ephemeris version and path
+tools_venv_dir: '/tmp/tools_venv'
+ephemeris_version: '0.7.0'
 
 # Create bootstrap user
 # if an apy key is not present on galaxy, a new user is created to istall tools and removed.
@@ -93,3 +100,8 @@ dataset_dest_dir: '{{export_dir}}/galaxy/database/files/'
 # visualisation plugin, we keep this recipes external
 # and implement a common interface to insall these resources.
 add_more_assets: false
+
+#______________________________________
+# Inform the role if galaxy tools and reference data will be installed
+# If yes, galaxy is not started
+get_refdata: false
