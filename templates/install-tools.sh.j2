@@ -76,9 +76,9 @@ function check_postgres_status {
 function check_postgresql {
 
 {% if ansible_virtualization_type == "docker" %}
-  check_postgresql_docker
+  start_postgresql_docker
 {% else %}
-  check_postgresql_vm
+  start_postgresql_vm
 {% endif %}
 
   check_postgres_status
