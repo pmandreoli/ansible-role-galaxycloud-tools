@@ -19,8 +19,8 @@
 - name: '[EL] [Docker] Start PostgreSQL server'
   shell: '/usr/pgsql-{{ postgresql_version }}/bin/pg_ctl -D {{ postgresql_pgdata }} -w start'
   when:
-    - not pg_pid.stat.exists
     - ansible_virtualization_type == "docker"
+    - not pg_pid.stat.exists
     - ansible_os_family == "RedHat"
   become: yes
   become_user: postgres
