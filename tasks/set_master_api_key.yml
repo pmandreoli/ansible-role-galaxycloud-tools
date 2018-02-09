@@ -1,0 +1,14 @@
+---
+- name: Generate random api key
+  command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
+  register: master_api_key
+
+- set_fact:
+    galaxy_admin_api_key: '{{master_api_key.stdout}}'
+
+- name: Set master_api_key user as Galaxy admin
+  ini_file:
+    dest: '{{ galaxy_config_file }}'
+    section: 'app:main'
+    option: 'master_api_key'
+    value: '{{galaxy_admin_api_key}}'
