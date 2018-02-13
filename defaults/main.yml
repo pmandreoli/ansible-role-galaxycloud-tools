@@ -68,6 +68,14 @@ bootstrap_user_name: 'admin'
 bootstrap_user_password: 'password'
 create_random_api_key: true
 
+# Use master_api_key
+# Master key that allows many API admin actions to be used without actually
+# having a defined admin user in the database/config.  Only set this if you
+# need to bootstrap Galaxy, you probably do not want to set this on public
+# servers.
+# NOTE: this is alternative to creta_bootstrap_user option.
+use_master_api_key: false
+
 # add lock file to avoid role re-run during recipe update.
 # to re-run the role remove the lock file {{lock_file_path}}/indigo-dc.galaxycloud-tools.lock
 lock_file_path: '/var/run'
