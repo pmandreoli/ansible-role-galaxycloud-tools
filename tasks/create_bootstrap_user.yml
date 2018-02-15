@@ -53,5 +53,6 @@
   when: admin_users_found.msg == ""
 
 - include: stop_postgres.yml
+  when: ansible_virtualization_type == "docker"
   become_user: root
   become_method: sudo
