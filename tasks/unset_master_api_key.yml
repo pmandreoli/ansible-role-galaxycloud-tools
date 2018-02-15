@@ -1,6 +1,0 @@
----
-- name: Remove master_api_key from galaxy.ini
-  replace:
-    dest: '{{galaxy_config_file}}'
-    regexp: 'master_api_key = {{galaxy_admin_api_key}}'
-    replace: '#master_api_key = changethis'
