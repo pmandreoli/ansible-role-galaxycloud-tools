@@ -63,9 +63,9 @@ ephemeris_version: '0.7.0'
 create_bootstrap_user: false
 galaxy_database_connection: 'postgresql://galaxy:galaxy@localhost:5432/galaxy'
 use_pbkdf2: true
-bootstrap_user_mail: 'admin@server.com'
-bootstrap_user_name: 'admin'
-bootstrap_user_password: 'password'
+bootstrap_user_mail: 'bootstrap_user@server.com'
+bootstrap_user_name: 'bootstrap_user'
+bootstrap_user_password: 'bootstrap_password'
 create_random_api_key: true
 
 # Use master_api_key

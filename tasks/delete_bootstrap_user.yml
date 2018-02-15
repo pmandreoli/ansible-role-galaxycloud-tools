@@ -5,7 +5,7 @@
 
 - name: Delete bootstrap user
   command: >
-    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/delete_galaxy_user.py
+    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/manage_galaxy_bootstrap_user.py delete
     --user {{bootstrap_user_mail}}
   environment:
     VIRTUAL_ENV: "{{ galaxy_venv_path }}"
