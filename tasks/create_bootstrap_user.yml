@@ -3,16 +3,22 @@
   become_user: root
   become_method: sudo
 
-- name: 'Copy create/delete user script to {{ galaxy_custom_script_path }}'
+- name: 'Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
   template:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
   with_items:
-    - { src: 'create_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/create_galaxy_user.py' }
-    - { src: 'delete_galaxy_user.py.j2', dest: '{{ galaxy_custom_script_path }}/delete_galaxy_user.py' }
+    - { src: 'manage_galaxy_bootstrap_user.py.j2', dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py' }
     - { src: 'pwd_generator.j2', dest: '{{ galaxy_custom_script_path }}/pwd-generator' }
   become_user: root
   become_method: sudo
+
+- name: Delete old bootstrap user if existing.
+  command: >
+    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/manage_galaxy_bootstrap_user.py delete
+    --user {{bootstrap_user_mail}}
+  environment:
+    VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
 - name: Generate random api key
   command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
@@ -25,7 +31,7 @@
 
 - name: Create Galaxy bootstrap user
   command: >
-    chdir={{ galaxy_install_path }} {{ galaxy_venv_path }}/bin/python {{ galaxy_custom_script_path }}/create_galaxy_user.py
+    chdir={{ galaxy_install_path }} {{ galaxy_venv_path }}/bin/python {{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py create
     --user {{bootstrap_user_mail}}
     --password {{bootstrap_user_password}}
     --username {{bootstrap_user_name}}
@@ -47,5 +53,6 @@
   when: admin_users_found.msg == ""
 
 - include: stop_postgres.yml
+  when: ansible_virtualization_type == "docker"
   become_user: root
   become_method: sudo

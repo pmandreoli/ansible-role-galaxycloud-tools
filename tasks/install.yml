@@ -22,11 +22,6 @@
   become_user: '{{galaxy_user}}'
   become: yes
 
-- include: set_master_api_key.yml
-  when: use_master_api_key|bool
-  become_user: '{{galaxy_user}}'
-  become: yes
-
 - include: tools.yml
 
 - include: interactive_tours.yml
@@ -40,11 +35,6 @@
 
 - include: delete_bootstrap_user.yml
   when: create_bootstrap_user|bool
-  become_user: '{{galaxy_user}}'
-  become: yes
-
-- include: unset_master_api_key.yml
-  when: use_master_api_key|bool
   become_user: '{{galaxy_user}}'
   become: yes
 
