@@ -3,7 +3,7 @@
   become_user: root
   become_method: sudo
 
-- name: 'Copy manget_galaxy_bootstrap_ user script to {{ galaxy_custom_script_path }}'
+- name: 'Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
   template:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
