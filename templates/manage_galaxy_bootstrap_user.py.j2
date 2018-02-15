@@ -96,7 +96,7 @@ def delete_user(email):
       sa_session.delete(role)
       sa_session.flush()
     else:
-      print 'No role found for user' % email
+      print 'No role found for user %s' % email
 
     query = sa_session.query( User ).filter_by( email=email )
     if query.count() > 0:

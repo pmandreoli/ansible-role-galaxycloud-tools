@@ -3,7 +3,7 @@
   become_user: root
   become_method: sudo
 
-- name: 'Copy create/delete user script to {{ galaxy_custom_script_path }}'
+- name: 'Copy manget_galaxy_bootstrap_ user script to {{ galaxy_custom_script_path }}'
   template:
     src: '{{ item.src }}'
     dest: '{{ item.dest }}'
@@ -12,6 +12,13 @@
     - { src: 'pwd_generator.j2', dest: '{{ galaxy_custom_script_path }}/pwd-generator' }
   become_user: root
   become_method: sudo
+
+- name: Delete old bootstrap user if existing.
+  command: >
+    chdir={{galaxy_install_path}} {{galaxy_venv_path}}/bin/python {{galaxy_custom_script_path}}/manage_galaxy_bootstrap_user.py delete
+    --user {{bootstrap_user_mail}}
+  environment:
+    VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
 - name: Generate random api key
   command: "{{ galaxy_custom_script_path }}/pwd-generator -l 32"
