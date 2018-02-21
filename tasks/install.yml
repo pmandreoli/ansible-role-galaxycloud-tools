@@ -1,6 +1,13 @@
 ---
-# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
+- set_fact:
+    galaxyctl_bin_path: '/usr/bin'
+  when: ansible_os_family == "RedHat"
 
+- set_fact:
+    galaxyctl_bin_path: '/usr/local/bin'
+  when: ansible_os_family == "Debian"
+
+# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
 - name: 'Create {{ galaxy_tools_base_dir }}'
   file:
     path: '{{ galaxy_tools_base_dir }}'
