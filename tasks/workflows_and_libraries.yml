@@ -62,8 +62,17 @@
 - name: Stop Galaxy lite
   command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
 
+#______________________________________
+# Move datasets if src dir exists
+- name: 'Check if /home/galaxy/galaxy/database/files dir exists'
+  stat:
+    path: '{{galaxy_install_path}}/database/files/'
+  register: home_galaxy_database_dir
+
 - include: move_datasets.yml
-  when: move_datasets|bool
+  when:
+    - move_datasets|bool
+    - home_galaxy_database_dir.stat.exists
 
 - name: restore galaxy.ini
   copy:
