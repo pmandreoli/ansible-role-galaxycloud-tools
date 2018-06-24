@@ -1,19 +1,12 @@
 ---
 # Get Conda prefix
 
-- name: Copy Galaxy management script
-  template:
-    src: '{{ item.src }}'
-    dest: '{{ item.dest }}'
-  with_items:
-    - { src: 'read_ini_file.py.j2', dest: '/tmp/read_ini_file.py' }
-
 - name: Get conda prefix from {{ galaxy_config_file }}
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_file }} -s app:main -o conda_prefix'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s app:main -o conda_prefix'
   register: galaxy_conda_prefix
 
 - name: Get tool dependency directory path from {{ galaxy_config_file }}
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_file }} -s app:main -o tool_dependency_dir'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s app:main -o tool_dependency_dir'
   register: tool_deps_path
 
 - name: Set conda_prefix variable

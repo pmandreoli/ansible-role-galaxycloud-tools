@@ -7,6 +7,24 @@
     galaxyctl_bin_path: '/usr/local/bin'
   when: ansible_os_family == "Debian"
 
+# Copy script to read galaxy config file
+- name: Copy galaxy configuration file reader
+  gat_url:
+    url: 'https://raw.githubusercontent.com/Laniakea-elixir-it/Scripts/master/galaxy/read_galaxy_config_file.py'
+    dest: '/tmp/read_galaxy_config_file.py'
+    mode: a+x
+
+# Check galaxy.ini or galaxy.yml to enable support for older versions
+- name: Check that the galaxy.yml exists
+  stat:
+    path: '{{ galaxy_config_path }}/galaxy.yml'
+    register: stat_result
+
+- name: Set galaxy_config_file to galaxy.ini if galaxy.yml not exists
+  set_fact:
+    galaxy_config_file: '{{ galaxy_config_path }}/galaxy.ini'
+  when: not stat_resutl.stat.exists|bool
+
 # Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
 - name: 'Create {{ galaxy_tools_base_dir }}'
   file:
