@@ -17,8 +17,8 @@
   when: ansible_os_family == "Debian"
 
 # default: get file_path set and move there datasets
-- name: 'Get tool dependency directory path from {{ galaxy_config_path }}/galaxy.ini.prod'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_path }}/galaxy.ini.prod -s app:main -o file_path'
+- name: 'Get tool dependency directory path from {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_ini_file.py -c {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod -s app:main -o file_path'
   register: register_file_path
   when: not set_dataset_dest_dir|bool
 

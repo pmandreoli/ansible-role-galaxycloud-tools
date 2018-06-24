@@ -15,14 +15,22 @@
     mode: a+x
 
 # Check galaxy.ini or galaxy.yml to enable support for older versions
-- name: Check that the galaxy.yml exists
+- name: Check that the galaxy.yml.sample exists
   stat:
-    path: '{{ galaxy_config_path }}/galaxy.yml'
+    path: '{{ galaxy_config_path }}/galaxy.yml.sample'
     register: stat_result
+
+- name: 'Set galaxy.yml extension to yml for conditionals'
+  set_fact:
+    galaxy_config_file_extension: 'yml'
+    galaxy_main_section: 'galaxy'
+  when: stat_resutl.stat.exists|bool
 
 - name: Set galaxy_config_file to galaxy.ini if galaxy.yml not exists
   set_fact:
     galaxy_config_file: '{{ galaxy_config_path }}/galaxy.ini'
+    galaxy_config_file_extension: 'ini'
+    galaxy_main_section: 'app:main'
   when: not stat_resutl.stat.exists|bool
 
 # Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
