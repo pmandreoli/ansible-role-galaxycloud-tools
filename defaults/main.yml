@@ -14,7 +14,7 @@ galaxy_directory: galaxy
 # Galaxy install path
 galaxy_install_path: "{{galaxy_FS_path}}/{{galaxy_directory}}"
 
-# Galaxy config/galaxy.ini path
+# Galaxy config/galaxy.yml path
 galaxy_config_path: "{{galaxy_install_path}}/config"
 galaxy_config_file: "{{galaxy_config_path}}/galaxy.yml"
 
@@ -82,7 +82,7 @@ export_dir: "/export"
 # This role exploits a lite version of galaxy to install data-libraries.
 # It install dataset in /home/galaxy/galaxy/database/files/000 by defaults. 
 # If the default galaxy database directory is different you have two options.
-# By default the role read galaxy.ini and move datasets to file_path dir:
+# By default the role read galaxy.yml and move datasets to file_path dir:
 # move_datasets: true
 # set_dataset_dest_dir: false
 #
