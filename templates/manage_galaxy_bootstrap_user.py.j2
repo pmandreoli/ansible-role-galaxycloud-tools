@@ -19,27 +19,17 @@ Usage:
 
 import sys
 sys.path.insert(1,'{{galaxy_install_path}}')
-sys.path.insert(1,'{{galaxy_install_path}}')
+sys.path.insert(1,'{{galaxy_install_path}}/lib')
 
-from scripts.db_shell import *
-from galaxy.util.bunch import Bunch
-from galaxy.security import GalaxyRBACAgent
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import *
+from galaxy.model import User, APIKeys
+from galaxy.model.mapping import init
+from galaxy.model.orm.scripts import get_config
 import argparse
-bunch = Bunch( **globals() )
-engine = create_engine('{{galaxy_database_connection}}')
-bunch.session = sessionmaker(bind=engine)
-# For backward compatibility with "model.context.current"
-bunch.context = sessionmaker(bind=engine)
-
-security_agent = GalaxyRBACAgent( bunch )
-security_agent.sa_session = sa_session
 
 #______________________________________
 def cli_options():
     parser = argparse.ArgumentParser(description='Delete galaxy users')
-    parser.add_argument('-c', '--config-file', dest='config_file', help='Galaxy ini file')
+    parser.add_argument('-c', '--config-file', dest='config_file', help='Galaxy configuration file')
 
     subparsers = parser.add_subparsers(title="action", help='create or delete bootstrap users')
     parser_create = subparsers.add_parser('create', help='create a new bootstrap user')
@@ -56,7 +46,7 @@ def cli_options():
     return parser.parse_args()
 
 #______________________________________
-def delete_user(email):
+def delete_user(sa_session, security_agent, email):
     """
         Delete Galaxy User.
     """
@@ -108,7 +98,7 @@ def delete_user(email):
       #raise Exception('No user %s found' % email)
 
 #______________________________________
-def add_user(email, password, key=None, username="admin"):
+def add_user(sa_session, security_agent, email, password, key=None, username="admin"):
     """
         Add Galaxy User.
         From John https://gist.github.com/jmchilton/4475646
@@ -140,12 +130,19 @@ def add_user(email, password, key=None, username="admin"):
 
 #______________________________________
 def manage_galaxy_bootstrap_user():
+
+    db_url = get_config(sys.argv, use_argparse=False)['db_url']
+
     options = cli_options()
   
+    mapping = init('/tmp/', db_url)
+    sa_session = mapping.context
+    security_agent = mapping.security_agent
+
     if options.action == "create":
-      add_user(options.user, options.password, key=options.key, username=options.username)
+      add_user(sa_session, security_agent, options.user, options.password, key=options.key, username=options.username)
     elif options.action == "delete":
-      delete_user(options.user)
+      delete_user(sa_session, security_agent, options.user)
  
 #______________________________________
 if __name__ == "__main__":
