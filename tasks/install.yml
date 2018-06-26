@@ -22,7 +22,7 @@
 - name: Check that the galaxy.yml.sample exists
   stat:
     path: '{{ galaxy_config_path }}/galaxy.yml.sample'
-    register: stat_result
+  register: stat_result
 
 - name: 'Set galaxy.yml extension to yml for conditionals'
   set_fact:
