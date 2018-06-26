@@ -1,4 +1,6 @@
 ---
+#______________________________________
+# Galaxyctl facts
 - set_fact:
     galaxyctl_bin_path: '/usr/bin'
   when: ansible_os_family == "RedHat"
@@ -7,6 +9,7 @@
     galaxyctl_bin_path: '/usr/local/bin'
   when: ansible_os_family == "Debian"
 
+#______________________________________
 # Copy script to read galaxy config file
 - name: Copy galaxy configuration file reader
   gat_url:
@@ -14,6 +17,7 @@
     dest: '/tmp/read_galaxy_config_file.py'
     mode: a+x
 
+#______________________________________
 # Check galaxy.ini or galaxy.yml to enable support for older versions
 - name: Check that the galaxy.yml.sample exists
   stat:
@@ -33,7 +37,9 @@
     galaxy_main_section: 'app:main'
   when: not stat_resutl.stat.exists|bool
 
-# Ansible galaxy is not capable to download git submodules. We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
+#______________________________________
+# Ansible galaxy is not able to download git submodules.
+# We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
 - name: 'Create {{ galaxy_tools_base_dir }}'
   file:
     path: '{{ galaxy_tools_base_dir }}'
@@ -50,6 +56,7 @@
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
+#______________________________________
 - include: create_bootstrap_user.yml
   when: create_bootstrap_user|bool
   become_user: '{{galaxy_user}}'
@@ -71,6 +78,7 @@
   become_user: '{{galaxy_user}}'
   become: yes
 
+#______________________________________
 - name: Lock role
   template:
     src: 'indigo-dc.galaxycloud-tools.lock.j2'
