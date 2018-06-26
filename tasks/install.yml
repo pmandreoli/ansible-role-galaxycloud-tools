@@ -12,7 +12,7 @@
 #______________________________________
 # Copy script to read galaxy config file
 - name: Copy galaxy configuration file reader
-  gat_url:
+  get_url:
     url: 'https://raw.githubusercontent.com/Laniakea-elixir-it/Scripts/master/galaxy/read_galaxy_config_file.py'
     dest: '/tmp/read_galaxy_config_file.py'
     mode: a+x
