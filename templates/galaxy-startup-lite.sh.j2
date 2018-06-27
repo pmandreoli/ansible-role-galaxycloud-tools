@@ -38,6 +38,8 @@ export GALAXY_CONFIG_JOB_CONFIG_FILE=$JOB_CONF
 #---
 install_log="$GALAXY/galaxy_startup_lite.log"
 install_pidfile="$GALAXY/galaxy_startup_lite.pid"
+#---
+postgresql_version='9.6'
 
 #________________________________
 # Get Distribution
@@ -58,10 +60,11 @@ function start_postgresql_vm {
     fi
   elif [[ $ID = "centos" ]]; then
       echo "[EL][VM] Check postgresql"
-      systemctl start postgresql-9.6
+      systemctl start postgresql-${postgresql_version}
   fi
 }
 
+#________________________________
 function check_postgresql_docker {
 
   if [[ $ID = "ubuntu" ]]; then
@@ -69,14 +72,15 @@ function check_postgresql_docker {
     service start postgresql
   elif [ "$ID" = "centos" ]; then
     echo "[EL][Docker] Check postgresql"
-    if [[ ! -f /var/lib/pgsql/9.6/data/postmaster.pid ]]; then
+    if [[ ! -f /var/lib/pgsql/${postgresql_version}/data/postmaster.pid ]]; then
       echo "Starting postgres on centos"
-      sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data -w start
+      sudo -E -u postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data -w start
     fi
   fi
 
 }
 
+#________________________________
 function check_postgres_status {
 
   PGUSER="${PGUSER:="postgres"}"
@@ -84,12 +88,13 @@ function check_postgres_status {
   if [[ $ID = "ubuntu" ]]; then
     echo 'placeholder'
   elif [ "$ID" = "centos" ]; then
-    /usr/pgsql-9.6/bin/pg_isready -U "$PGUSER" -q
+    /usr/pgsql-${postgresql_version}/bin/pg_isready -U "$PGUSER" -q
     DATA=$?
   fi
 
 }
 
+#________________________________
 function check_postgresql {
 
 {% if ansible_virtualization_type == "docker" %}
@@ -123,6 +128,7 @@ function install_lsof {
   fi
 }
 
+#________________________________
 function check_lsof {
   type -P lsof &>/dev/null || { echo "lsof is not installed. Installing.."; install_lsof; }
 }
@@ -157,7 +163,7 @@ function galaxy_start {
   # start Galaxy
   export PORT=8080
   echo "starting Galaxy"
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --skip-eggs --skip-wheels --log-file=$install_log --pid-file=$install_pidfile
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000 --skip-eggs --skip-wheels
 
   # wait galaxy to start
   galaxy_install_pid=`cat $install_pidfile`
@@ -185,7 +191,7 @@ function galaxy_start {
 
 function galaxy_stop {
   echo "stopping Galaxy"
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop-daemon --skip-eggs --skip-wheels --log-file=$install_log --pid-file=$install_pidfile
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
 
 {% if ansible_virtualization_type == "docker" %}
 # stop postgresql on docker. Keep it running on vm
@@ -197,7 +203,7 @@ if [[ -r /etc/os-release ]]; then
     service stop postgresql
   elif [ "$ID" = "centos" ]; then
     echo "[EL][Docker] Stop postgresql"
-    sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data stop
+    sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
   fi
 fi
 {% endif %}
