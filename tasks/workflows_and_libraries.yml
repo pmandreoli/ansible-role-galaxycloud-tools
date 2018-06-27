@@ -22,11 +22,19 @@
     group: '{{galaxy_user}}'
     remote_src: true
 
-- name: Copy galaxy-startup-lite script
+- name: '[release_17.**] Copy galaxy-startup-lite script'
+  template:
+    src: 'galaxy-startup-lite.17.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
+    mode: a+x
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+
+- name: '[release_18.**] Copy the galaxy-startup-lite script'
   template:
     src: 'galaxy-startup-lite.sh.j2'
     dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
     mode: a+x
+  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 - name: Start Galaxy lite
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
