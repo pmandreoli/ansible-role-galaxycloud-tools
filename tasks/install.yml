@@ -1,4 +1,5 @@
 ---
+
 #______________________________________
 # Galaxyctl facts
 - set_fact:
@@ -18,7 +19,23 @@
     mode: a+x
 
 #______________________________________
+# get galaxy version number to support for older galaxy versione (<18.01) when ini file was used
+
+- name: Get Galaxy version number only for comparison
+  set_fact:
+    galaxy_version_number: "{{ GALAXY_VERSION | replace('release_','') }}"
+  when: (GALAXY_VERSION != 'master') or (GALAXY_VERSION != 'dev')
+
+- debug:
+    msg: 'Galaxy version: {{ GALAXY_VERSION }}'
+
+- debug:
+    msg: 'Galaxy version number: {{ galaxy_version_number }}'
+  when: galaxy_version_number is defined
+
+#______________________________________
 # Check galaxy.ini or galaxy.yml to enable support for older versions
+
 - name: Check that the galaxy.yml.sample exists
   stat:
     path: '{{ galaxy_config_path }}/galaxy.yml.sample'
