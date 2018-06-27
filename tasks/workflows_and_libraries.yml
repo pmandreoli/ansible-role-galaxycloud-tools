@@ -29,7 +29,7 @@
     mode: a+x
 
 - name: Start Galaxy lite
-  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite start'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
 
 - name: Create/invoke script virtualenv
   pip:
@@ -60,7 +60,7 @@
     - not create_bootstrap_user|bool
 
 - name: Stop Galaxy lite
-  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
 
 #______________________________________
 # Move datasets if src dir exists
