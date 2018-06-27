@@ -6,17 +6,17 @@
 - name: backup galaxy config file
   copy:
     src: '{{galaxy_config_file}}'
-    dest: '{{galaxy_config_path}}/galaxy.{{galaxy_config_file_extension}}.prod'
+    dest: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
     remote_src: true
-    force: no # prevent galaxy.yml.prod be rewritten
+    force: no # prevent galaxy.prod.*** be rewritten
 
 - include: create_galaxy_config_lite.yml 
 
 - name: Move to lite galaxy configuration file file
   copy:
-    src: '{{galaxy_config_path}}/galaxy.{{galaxy_config_file_extension}}.lite'
+    src: '{{galaxy_config_path}}/galaxy.lite.{{galaxy_config_file_extension}}'
     dest: '{{galaxy_config_file}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
@@ -84,7 +84,7 @@
 
 - name: restore galaxy configuration file
   copy:
-    src: '{{galaxy_config_path}}/galaxy.{{galaxy_config_file_extension}}.prod'
+    src: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
     dest: '{{galaxy_config_file}}'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'

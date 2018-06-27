@@ -2,24 +2,24 @@
 - name: Create galaxy config file for lite start
   copy:
     src: '{{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.sample'
-    dest: '{{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.lite'
+    dest: '{{ galaxy_config_path }}/galaxy.lite.{{galaxy_config_file_extension}}'
     remote_src: true
 
-- name: 'Get database_connection from {{ galaxy_config_file }}.prod'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod -s {{galaxy_main_section}} -o database_connection'
+- name: 'Get database_connection from {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}} -s {{galaxy_main_section}} -o database_connection'
   register: galaxy_database_connection
 
-- name: 'Get install_database_connection from {{ galaxy_config_file }}.prod'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod -s {{galaxy_main_section}} -o install_database_connection'
+- name: 'Get install_database_connection from {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}} -s {{galaxy_main_section}} -o install_database_connection'
   register: galaxy_install_database_connection
 
-- name: 'Get admin_users from {{ galaxy_config_file }}.prod'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod -s {{galaxy_main_section}} -o admin_users'
+- name: 'Get admin_users from {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}} -s {{galaxy_main_section}} -o admin_users'
   register: galaxy_admin_users
 
-- name: edit galaxy.ini.lite
+- name: edit galaxy.lite.ini
   ini_file:
-    dest: '{{ galaxy_config_path}}/galaxy.ini.lite'
+    dest: '{{ galaxy_config_path}}/galaxy.lite.ini'
     section: '{{ item.section }}'
     option: '{{ item.option }}'
     value: '{{ item.value }}'
@@ -29,10 +29,10 @@
     - { section: 'app:main', option: 'admin_users', value: '{{galaxy_admin_users.stdout}}' }
   when: galaxy_config_file_extension == 'ini'
 
-- name: edit galaxy.yml.lite
+- name: edit galaxy.lite.yml
   command: '{{ galaxy_venv_path }}/bin/python
             {{ galaxy_custom_script_path }}/parse_galaxy_yaml.py
-            -c "{{ galaxy_config_path }}/galaxy.yml.lite"
+            -c "{{ galaxy_config_path }}/galaxy.lite.yml"
             -s "{{ item.section }}"
             -o "{{ item.option }}"
             -v "{{ item.value }}"'

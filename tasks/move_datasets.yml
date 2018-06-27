@@ -17,12 +17,12 @@
   when: ansible_os_family == "Debian"
 
 # default: get file_path set and move there datasets
-- name: 'Get tool dependency directory path from {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.{{galaxy_config_file_extension}}.prod -s app:main -o file_path'
+- name: 'Get tool dependency directory path from {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }}/galaxy.prod.{{galaxy_config_file_extension}} -s {{galaxy_main_section}} -o file_path'
   register: register_file_path
   when: not set_dataset_dest_dir|bool
 
-- name: 'Move datasets to file_path directory from galaxy.{{galaxy_config_file_extension}}.prod to {{register_file_path.stdout}}'
+- name: 'Move datasets to file_path directory from galaxy.prod.{{galaxy_config_file_extension}} to {{register_file_path.stdout}}'
   shell: 'rsync -av {{galaxy_install_path}}/database/files/ {{register_file_path.stdout}} > /tmp/move_datasets_rsync.log'
   when: not set_dataset_dest_dir|bool
   become_user: '{{galaxy_user}}'
