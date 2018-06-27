@@ -51,7 +51,7 @@ Galaxy_flavor_recipe_branch: 'master'
 
 # Set Ephemeris version and path
 tools_venv_dir: '/tmp/tools_venv'
-ephemeris_version: '0.7.0'
+ephemeris_version: '0.9.0'
 
 # Create bootstrap user
 # if an apy key is not present on galaxy, a new user is created to istall tools and removed.
