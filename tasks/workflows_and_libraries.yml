@@ -1,6 +1,8 @@
 ---
 - name: 'Ensure galaxy is running'
-  supervisorctl: name="galaxy:" state=started
+  supervisorctl:
+    name: 'galaxy:'
+    state: started
   ignore_errors: yes  
 
 - name: 'Create/invoke script virtualenv'
@@ -11,7 +13,6 @@
     state: forcereinstall
   with_items:
     - ephemeris=={{ephemeris_version}}
-  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 # If the bootstrap user is used, it will be deleted.
 # Workflows are installed at user level and will be deleted, too.
