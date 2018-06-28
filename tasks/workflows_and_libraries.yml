@@ -1,20 +1,16 @@
 ---
-- name: 'Ensure service running'
-  service:
-    name: 'supervisord'
-    state: started
 
-- name: 'Ensure postgresql is running'
-  supervisorctl:
-    name: 'postgresql'
-    state: started
-  ignore_errors: yes
+# galaxy is already running on VMS
+# start it on docker
 
-- name: 'Ensure galaxy is running'
-  supervisorctl:
-    name: 'galaxy:'
-    state: started
-  ignore_errors: yes  
+- name: '[release_18.**] Copy galaxy-startup-lite script'
+  template:
+    src: 'galaxy-startup-lite.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
+    mode: a+x
+
+- name: '[release_18.**] Start Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
 
 - name: 'Create/invoke script virtualenv'
   pip:
