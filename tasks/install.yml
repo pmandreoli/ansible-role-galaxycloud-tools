@@ -85,13 +85,13 @@
 
 - include: workflows_and_libraries_17.yml
   when:
-   - (install_workflows|bool) or (install_data_libraries|bool)
    - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01) 
+   - (install_workflows|bool) or (install_data_libraries|bool)
 
 - include: workflows_and_libraries.yml
   when:
-   - (install_workflows|bool) or (install_data_libraries|bool)
    - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+   - (install_workflows|bool) or (install_data_libraries|bool)
 
 - include: assets.yml
   when: add_more_assets|bool
