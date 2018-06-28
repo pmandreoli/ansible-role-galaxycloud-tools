@@ -1,5 +1,4 @@
 ---
-
 #______________________________________
 # Galaxyctl facts
 - set_fact:
@@ -84,8 +83,15 @@
 - include: interactive_tours.yml
   when: install_interactive_tours|bool
 
+- include: workflows_and_libraries_17.yml
+  when:
+   - (install_workflows|bool) or (install_data_libraries|bool)
+   - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01) 
+
 - include: workflows_and_libraries.yml
-  when: install_workflows|bool or install_data_libraries|bool
+  when:
+   - (install_workflows|bool) or (install_data_libraries|bool)
+   - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 - include: assets.yml
   when: add_more_assets|bool

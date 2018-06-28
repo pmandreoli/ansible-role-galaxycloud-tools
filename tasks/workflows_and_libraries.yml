@@ -1,54 +1,4 @@
 ---
-- name: stop galaxy
-  supervisorctl: name="galaxy:" state=stopped
-  ignore_errors: yes
-
-- name: backup galaxy config file
-  copy:
-    src: '{{galaxy_config_file}}'
-    dest: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-    force: no # prevent galaxy.prod.*** be rewritten
-
-- include: create_galaxy_config_lite.yml 
-
-- name: Move to lite galaxy configuration file file
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.lite.{{galaxy_config_file_extension}}'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-
-- name: '[release_17.**] Copy galaxy-startup-lite script'
-  template:
-    src: 'galaxy-startup-lite.17.sh.j2'
-    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
-    mode: a+x
-  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
-
-- name: '[release_18.**] Copy the galaxy-startup-lite script'
-  template:
-    src: 'galaxy-startup-lite.sh.j2'
-    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
-    mode: a+x
-  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
-
-- name: Start Galaxy lite
-  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
-
-- name: '[release_17.**] Create/invoke script virtualenv'
-  pip:
-    name: '{{ item }}'
-    virtualenv: '{{ tools_venv_dir }}'
-    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
-    state: forcereinstall
-  with_items:
-    - ephemeris == '0.7.0'
-  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
-
 - name: '[release_18.**] Create/invoke script virtualenv'
   pip:
     name: '{{ item }}'
@@ -58,7 +8,6 @@
   with_items:
     - ephemeris=={{ephemeris_version}}
   when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
-
 
 # If the bootstrap user is used, it will be deleted.
 # Workflows are installed at user level and will be deleted, too.
@@ -71,16 +20,15 @@
     - install_workflows|bool
     - not create_bootstrap_user|bool
 
-- include: install_data_library_list.yml
-  with_items: '{{ galaxy_tools_data_library_list_files }}'
-  loop_control:
-    loop_var: data_library_list_file
-  when:
-    - install_data_libraries|bool
-    - not create_bootstrap_user|bool
-
-- name: Stop Galaxy lite
-  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
+# Data libraries upload is Currently not working
+# TODO fix.
+#- include: install_data_library_list.yml
+#  with_items: '{{ galaxy_tools_data_library_list_files }}'
+#  loop_control:
+#    loop_var: data_library_list_file
+#  when:
+#    - install_data_libraries|bool
+#    - not create_bootstrap_user|bool
 
 #______________________________________
 # Move datasets if src dir exists
