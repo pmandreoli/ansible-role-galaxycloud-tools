@@ -39,7 +39,17 @@
 - name: Start Galaxy lite
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
 
-- name: Create/invoke script virtualenv
+- name: '[release_17.**] Create/invoke script virtualenv'
+  pip:
+    name: '{{ item }}'
+    virtualenv: '{{ tools_venv_dir }}'
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    state: forcereinstall
+  with_items:
+    - ephemeris == '0.7.0'
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+
+- name: '[release_18.**] Create/invoke script virtualenv'
   pip:
     name: '{{ item }}'
     virtualenv: '{{ tools_venv_dir }}'
@@ -47,6 +57,8 @@
     state: forcereinstall
   with_items:
     - ephemeris=={{ephemeris_version}}
+  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+
 
 # If the bootstrap user is used, it will be deleted.
 # Workflows are installed at user level and will be deleted, too.
