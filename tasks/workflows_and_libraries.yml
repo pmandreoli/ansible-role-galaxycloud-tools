@@ -1,4 +1,10 @@
 ---
+- name: 'Ensure postgresql is running'
+  supervisorctl:
+    name: 'postgresql'
+    state: started
+  ignore_errors: yes
+
 - name: 'Ensure galaxy is running'
   supervisorctl:
     name: 'galaxy:'
@@ -46,11 +52,3 @@
   when:
     - move_datasets|bool
     - home_galaxy_database_dir.stat.exists
-
-- name: restore galaxy configuration file
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
