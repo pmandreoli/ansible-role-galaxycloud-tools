@@ -1,4 +1,9 @@
 ---
+- name: 'Ensure service running'
+  service:
+    name: 'supervisord'
+    state: started
+
 - name: 'Ensure postgresql is running'
   supervisorctl:
     name: 'postgresql'
