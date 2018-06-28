@@ -1,9 +1,9 @@
 ---
-- name: stop galaxy
+- name: '[release_17.**] stop galaxy'
   supervisorctl: name="galaxy:" state=stopped
   ignore_errors: yes
 
-- name: backup galaxy config file
+- name: '[release_17.**] backup galaxy config file'
   copy:
     src: '{{galaxy_config_file}}'
     dest: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
@@ -14,7 +14,7 @@
 
 - include: create_galaxy_config_lite.yml 
 
-- name: Move to lite galaxy configuration file
+- name: '[release_17.**] Move to lite galaxy configuration file'
   copy:
     src: '{{galaxy_config_path}}/galaxy.lite.{{galaxy_config_file_extension}}'
     dest: '{{galaxy_config_file}}'
@@ -28,7 +28,7 @@
     dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
     mode: a+x
 
-- name: Start Galaxy lite
+- name: '[release_17.**] Start Galaxy lite'
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
 
 - name: '[release_17.**] Create/invoke script virtualenv'
@@ -59,12 +59,12 @@
     - install_data_libraries|bool
     - not create_bootstrap_user|bool
 
-- name: Stop Galaxy lite
+- name: '[release_17.**] Stop Galaxy lite'
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
 
 #______________________________________
 # Move datasets if src dir exists
-- name: 'Check if /home/galaxy/galaxy/database/files dir exists'
+- name: '[release_17.**] Check if /home/galaxy/galaxy/database/files dir exists'
   stat:
     path: '{{galaxy_install_path}}/database/files/'
   register: home_galaxy_database_dir
@@ -74,7 +74,7 @@
     - move_datasets|bool
     - home_galaxy_database_dir.stat.exists
 
-- name: restore galaxy configuration file
+- name: '[release_17.**] restore galaxy configuration file'
   copy:
     src: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
     dest: '{{galaxy_config_file}}'

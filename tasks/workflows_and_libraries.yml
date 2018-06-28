@@ -1,5 +1,9 @@
 ---
-- name: '[release_18.**] Create/invoke script virtualenv'
+- name: 'Ensure galaxy is running'
+  supervisorctl: name="galaxy:" state=started
+  ignore_errors: yes  
+
+- name: 'Create/invoke script virtualenv'
   pip:
     name: '{{ item }}'
     virtualenv: '{{ tools_venv_dir }}'
