@@ -38,7 +38,7 @@
     virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
     state: forcereinstall
   with_items:
-    - ephemeris == '0.7.0'
+    - ephemeris=='0.7.0'
 
 # If the bootstrap user is used, it will be deleted.
 # Workflows are installed at user level and will be deleted, too.
