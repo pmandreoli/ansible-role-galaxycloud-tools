@@ -133,36 +133,39 @@ echo "Clean logs"
 rm $install_log
 rm $install_pidfile
 
-# install tools
+# install ephemeris
 install_ephemeris
-
-# ensure Galaxy is not running through supervisord
-if pgrep "supervisord" > /dev/null
-then
-    echo "Galaxy managed using supervisord. Shutting it down."
-    supervisorctl stop galaxy:
-fi
-
-# ensure galaxy is not running on run.sh and 8080 port
-check_lsof
-echo "Kill run.sh Galaxy instance listening on 8080 port"
-kill -9 $(lsof -t -i :8080)
-# install lsof to be sure
 
 # check PostgreSQL
 check_postgresql
 
-# create log file
-sudo -E -u $GALAXY_USER touch $install_log
- 
-# start Galaxy
-export PORT=8080
-echo "starting Galaxy"
-sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+# If Galaxy is running we install tools, otherwise we run int through run.sh
+if pgrep "supervisord" > /dev/null
+then
 
-# wait galaxy to start
-galaxy_install_pid=`cat $install_pidfile`
-galaxy-wait -g http://localhost:$PORT -v --timeout 120
+  echo "System is up and running. Starting with the installation."
+  export PORT=8080  
+
+else
+
+  # ensure galaxy is not running on run.sh and 8080 port
+  check_lsof
+  echo "Kill run.sh Galaxy instance listening on 8080 port"
+  kill -9 $(lsof -t -i :8080)
+
+  # create log file
+  sudo -E -u $GALAXY_USER touch $install_log
+ 
+  # start Galaxy
+  export PORT=8080
+  echo "starting Galaxy"
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+
+  # wait galaxy to start
+  galaxy_install_pid=`cat $install_pidfile`
+  galaxy-wait -g http://localhost:$PORT -v --timeout 120
+
+fi
 
 # install tools
 shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2"
@@ -173,17 +176,21 @@ if [ $exit_code != 0 ] ; then
     exit $exit_code
 fi
 
-# stop Galaxy
-echo "stopping Galaxy"
-sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
+# stop Galaxy if it was not running before
+if ! pgrep "supervisord" > /dev/null
+then
+  echo "stopping Galaxy"
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
 
 {% if ansible_virtualization_type == "docker" %}
-# stop postgresql on docker. Keep it running on vm
-if [[ $ID = "ubuntu" ]]; then
-  echo "[Ubuntu][Docker] Stop postgresql."
-  service stop postgresql
-elif [[ $ID = "centos" ]]; then
-  echo "[EL][Docker] Stop postgresql"
-  sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
-fi
+  # stop postgresql on docker. Keep it running on vm
+  if [[ $ID = "ubuntu" ]]; then
+    echo "[Ubuntu][Docker] Stop postgresql."
+    service stop postgresql
+  elif [[ $ID = "centos" ]]; then
+    echo "[EL][Docker] Stop postgresql"
+    sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
+  fi
 {% endif %}
+
+fi
