@@ -1,16 +1,17 @@
 ---
+# Galaxy is already running on VMs, so we install worflows and data libraries.
+# On Docker we start it in lite mode.
 
-# galaxy is already running on VMS
-# start it on docker
-
-- name: '[release_18.**] Copy galaxy-startup-lite script'
+- name: '[Docker][release_18.**] Copy galaxy-startup-lite script'
   template:
     src: 'galaxy-startup-lite.sh.j2'
     dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
     mode: a+x
+  when: ansible_virtualization_type == "docker"
 
-- name: '[release_18.**] Start Galaxy lite'
+- name: '[Docker][release_18.**] Start Galaxy lite'
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
 - name: 'Create/invoke script virtualenv'
   pip:
@@ -41,6 +42,10 @@
 #  when:
 #    - install_data_libraries|bool
 #    - not create_bootstrap_user|bool
+
+- name: '[Docker][release_18.**] Stop Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
 #______________________________________
 # Move datasets if src dir exists
