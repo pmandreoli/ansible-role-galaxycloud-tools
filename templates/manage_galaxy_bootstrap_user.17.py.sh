@@ -29,7 +29,7 @@ import argparse
 #______________________________________
 def cli_options():
     parser = argparse.ArgumentParser(description='Delete galaxy users')
-    parser.add_argument('-c', '--config-file', dest='config_file', help='Galaxy configuration file')
+    parser.add_argument('-c', '--config-file', dest='config_file', help='Galaxy ini file')
 
     subparsers = parser.add_subparsers(title="action", help='create or delete bootstrap users')
     parser_create = subparsers.add_parser('create', help='create a new bootstrap user')
@@ -46,7 +46,7 @@ def cli_options():
     return parser.parse_args()
 
 #______________________________________
-def delete_user(sa_session, security_agent, email):
+def delete_user(email):
     """
         Delete Galaxy User.
     """
@@ -98,7 +98,7 @@ def delete_user(sa_session, security_agent, email):
       #raise Exception('No user %s found' % email)
 
 #______________________________________
-def add_user(sa_session, security_agent, email, password, key=None, username="admin"):
+def add_user(email, password, key=None, username="admin"):
     """
         Add Galaxy User.
         From John https://gist.github.com/jmchilton/4475646
@@ -130,19 +130,12 @@ def add_user(sa_session, security_agent, email, password, key=None, username="ad
 
 #______________________________________
 def manage_galaxy_bootstrap_user():
-
-    db_url = get_config(sys.argv, use_argparse=False)['db_url']
-
     options = cli_options()
   
-    mapping = init('/tmp/', db_url)
-    sa_session = mapping.context
-    security_agent = mapping.security_agent
-
     if options.action == "create":
-      add_user(sa_session, security_agent, options.user, options.password, key=options.key, username=options.username)
+      add_user(options.user, options.password, key=options.key, username=options.username)
     elif options.action == "delete":
-      delete_user(sa_session, security_agent, options.user)
+      delete_user(options.user)
  
 #______________________________________
 if __name__ == "__main__":

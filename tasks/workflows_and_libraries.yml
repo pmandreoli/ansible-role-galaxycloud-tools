@@ -1,37 +1,19 @@
 ---
-- name: stop galaxy
-  supervisorctl: name="galaxy:" state=stopped
-  ignore_errors: yes
+# Galaxy is already running on VMs, so we install worflows and data libraries.
+# On Docker we start it in lite mode.
 
-- name: backup galaxy.ini
-  copy:
-    src: '{{galaxy_config_file}}'
-    dest: '{{galaxy_config_path}}/galaxy.ini.prod'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-    force: no # prevent galaxy.ini.prod be rewritten
-
-- include: create_galaxy_ini_lite.yml 
-
-- name: Move to lite galaxy.ini file
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.ini.lite'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-
-- name: Copy galaxy-startup-lite script
+- name: '[Docker][release_18.**] Copy galaxy-startup-lite script'
   template:
     src: 'galaxy-startup-lite.sh.j2'
     dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
     mode: a+x
+  when: ansible_virtualization_type == "docker"
 
-- name: Start Galaxy lite
-  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite start'
+- name: '[Docker][release_18.**] Start Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
-- name: Create/invoke script virtualenv
+- name: 'Create/invoke script virtualenv'
   pip:
     name: '{{ item }}'
     virtualenv: '{{ tools_venv_dir }}'
@@ -51,16 +33,19 @@
     - install_workflows|bool
     - not create_bootstrap_user|bool
 
-- include: install_data_library_list.yml
-  with_items: '{{ galaxy_tools_data_library_list_files }}'
-  loop_control:
-    loop_var: data_library_list_file
-  when:
-    - install_data_libraries|bool
-    - not create_bootstrap_user|bool
+# Data libraries upload is Currently not working
+# TODO fix.
+#- include: install_data_library_list.yml
+#  with_items: '{{ galaxy_tools_data_library_list_files }}'
+#  loop_control:
+#    loop_var: data_library_list_file
+#  when:
+#    - install_data_libraries|bool
+#    - not create_bootstrap_user|bool
 
-- name: Stop Galaxy lite
-  command: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop'
+- name: '[Docker][release_18.**] Stop Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
 #______________________________________
 # Move datasets if src dir exists
@@ -73,11 +58,3 @@
   when:
     - move_datasets|bool
     - home_galaxy_database_dir.stat.exists
-
-- name: restore galaxy.ini
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.ini.prod'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true

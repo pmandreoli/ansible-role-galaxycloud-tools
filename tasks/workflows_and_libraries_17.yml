@@ -1,0 +1,83 @@
+---
+- name: '[release_17.**] stop galaxy'
+  supervisorctl: name="galaxy:" state=stopped
+  ignore_errors: yes
+
+- name: '[release_17.**] backup galaxy config file'
+  copy:
+    src: '{{galaxy_config_file}}'
+    dest: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
+    remote_src: true
+    force: no # prevent galaxy.prod.*** be rewritten
+
+- include: create_galaxy_config_lite.yml 
+
+- name: '[release_17.**] Move to lite galaxy configuration file'
+  copy:
+    src: '{{galaxy_config_path}}/galaxy.lite.{{galaxy_config_file_extension}}'
+    dest: '{{galaxy_config_file}}'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
+    remote_src: true
+
+- name: '[release_17.**] Copy galaxy-startup-lite script'
+  template:
+    src: 'galaxy-startup-lite.17.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
+    mode: a+x
+
+- name: '[release_17.**] Start Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
+
+- name: '[release_17.**] Create/invoke script virtualenv'
+  pip:
+    name: '{{ item }}'
+    virtualenv: '{{ tools_venv_dir }}'
+    virtualenv_command: "{{ pip_virtualenv_command | default( 'virtualenv' ) }}"
+    state: forcereinstall
+  with_items:
+    - ephemeris=='0.7.0'
+
+# If the bootstrap user is used, it will be deleted.
+# Workflows are installed at user level and will be deleted, too.
+# So we skip workflow installation.
+- include: install_workflow_list.yml
+  with_items: '{{ galaxy_tools_workflow_list_path }}'
+  loop_control:
+    loop_var: workflow_list_path
+  when:
+    - install_workflows|bool
+    - not create_bootstrap_user|bool
+
+- include: install_data_library_list.yml
+  with_items: '{{ galaxy_tools_data_library_list_files }}'
+  loop_control:
+    loop_var: data_library_list_file
+  when:
+    - install_data_libraries|bool
+    - not create_bootstrap_user|bool
+
+- name: '[release_17.**] Stop Galaxy lite'
+  shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
+
+#______________________________________
+# Move datasets if src dir exists
+- name: '[release_17.**] Check if /home/galaxy/galaxy/database/files dir exists'
+  stat:
+    path: '{{galaxy_install_path}}/database/files/'
+  register: home_galaxy_database_dir
+
+- include: move_datasets.yml
+  when:
+    - move_datasets|bool
+    - home_galaxy_database_dir.stat.exists
+
+- name: '[release_17.**] restore galaxy configuration file'
+  copy:
+    src: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
+    dest: '{{galaxy_config_file}}'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
+    remote_src: true

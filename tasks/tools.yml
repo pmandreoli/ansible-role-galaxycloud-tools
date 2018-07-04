@@ -15,11 +15,19 @@
     - lsof
   when: ansible_os_family == "Debian"
 
-- name: Copy the install-tools script
+- name: '[release_17.**] Copy the install-tools script'
+  template:
+    src: 'install-tools.17.sh.j2'
+    dest: '{{galaxy_custom_script_path}}/install-tools'
+    mode: a+x
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+
+- name: '[release_18.**] Copy the install-tools script'
   template:
     src: 'install-tools.sh.j2'
     dest: '{{galaxy_custom_script_path}}/install-tools'
     mode: a+x
+  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 - include: get_conda.yml
 

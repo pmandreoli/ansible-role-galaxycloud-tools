@@ -9,40 +9,35 @@
 #
 # Usage: galaxy-startup-lite [start,stop]
 
-GALAXY='{{galaxy_install_path}}'
-GALAXY_USER='{{galaxy_user}}'
+GALAXY='/home/galaxy/galaxy'
+GALAXY_USER='galaxy'
 
 # allow galaxy configured to start using a proxy, to start with run.sh
 # if the static_enabled option is configure in galaxy.ini you have to comment it or set to
 # static_enabled = True
 # allow_library_path_paste = True
-#export GALAXY_CONFIG_STATIC_ENABLED=True
-#export GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE=True
-#unset GALAXY_CONFIG_NGINX_UPLOAD_STORE
-#unset GALAXY_CONFIG_NGINX_UPLOAD_PATH
+export GALAXY_CONFIG_STATIC_ENABLED=True
+export GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE=True
+unset GALAXY_CONFIG_NGINX_UPLOAD_STORE
+unset GALAXY_CONFIG_NGINX_UPLOAD_PATH
 
 # The lite mode can be useful to populate data libraries.
 # To make this work it is needed to unset the following variables
-#unset GALAXY_CONFIG_JOB_WORKING_DIRECTORY
-#unset GALAXY_CONFIG_FILE_PATH
-#unset GALAXY_CONFIG_NEW_FILE_PATH
-#unset GALAXY_CONFIG_TEMPLATE_CACHE_PATH
-#unset GALAXY_CONFIG_CITATION_CACHE_DATA_DIR
-#unset GALAXY_CONFIG_CLUSTER_FILES_DIRECTORY
-#unset GALAXY_CONFIG_FTP_UPLOAD_DIR
-#unset GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG
+unset GALAXY_CONFIG_JOB_WORKING_DIRECTORY
+unset GALAXY_CONFIG_FILE_PATH
+unset GALAXY_CONFIG_NEW_FILE_PATH
+unset GALAXY_CONFIG_TEMPLATE_CACHE_PATH
+unset GALAXY_CONFIG_CITATION_CACHE_DATA_DIR
+unset GALAXY_CONFIG_CLUSTER_FILES_DIRECTORY
+unset GALAXY_CONFIG_FTP_UPLOAD_DIR
+unset GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG
 
-#JOB_CONF={{galaxy_config_path}}/job_conf.xml.sample_basic
-#export GALAXY_CONFIG_JOB_CONFIG_FILE=$JOB_CONF
+JOB_CONF={{galaxy_config_path}}/job_conf.xml.sample_basic
+export GALAXY_CONFIG_JOB_CONFIG_FILE=$JOB_CONF
 
 #---
 install_log="$GALAXY/galaxy_startup_lite.log"
 install_pidfile="$GALAXY/galaxy_startup_lite.pid"
-#---
-postgresql_version='9.6'
-#---
-ephemeris_version='{{ephemeris_version}}'
-
 
 #________________________________
 # Get Distribution
@@ -63,11 +58,10 @@ function start_postgresql_vm {
     fi
   elif [[ $ID = "centos" ]]; then
       echo "[EL][VM] Check postgresql"
-      systemctl start postgresql-${postgresql_version}
+      systemctl start postgresql-9.6
   fi
 }
 
-#________________________________
 function check_postgresql_docker {
 
   if [[ $ID = "ubuntu" ]]; then
@@ -75,15 +69,14 @@ function check_postgresql_docker {
     service start postgresql
   elif [ "$ID" = "centos" ]; then
     echo "[EL][Docker] Check postgresql"
-    if [[ ! -f /var/lib/pgsql/${postgresql_version}/data/postmaster.pid ]]; then
+    if [[ ! -f /var/lib/pgsql/9.6/data/postmaster.pid ]]; then
       echo "Starting postgres on centos"
-      sudo -E -u postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data -w start
+      sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data -w start
     fi
   fi
 
 }
 
-#________________________________
 function check_postgres_status {
 
   PGUSER="${PGUSER:="postgres"}"
@@ -91,13 +84,12 @@ function check_postgres_status {
   if [[ $ID = "ubuntu" ]]; then
     echo 'placeholder'
   elif [ "$ID" = "centos" ]; then
-    /usr/pgsql-${postgresql_version}/bin/pg_isready -U "$PGUSER" -q
+    /usr/pgsql-9.6/bin/pg_isready -U "$PGUSER" -q
     DATA=$?
   fi
 
 }
 
-#________________________________
 function check_postgresql {
 
 {% if ansible_virtualization_type == "docker" %}
@@ -131,19 +123,8 @@ function install_lsof {
   fi
 }
 
-#________________________________
 function check_lsof {
   type -P lsof &>/dev/null || { echo "lsof is not installed. Installing.."; install_lsof; }
-}
-
-#________________________________
-function install_ephemeris {
-  echo "Load clean virtual environment"
-  virtualenv /tmp/tools_venv
-  source /tmp/tools_venv/bin/activate
-  echo "Install ephemeris using pip in the clean environment"
-  pip install bioblend
-  pip install ephemeris==$ephemeris_version
 }
 
 #________________________________
@@ -153,9 +134,6 @@ function galaxy_start {
   echo "Clean logs"
   rm $install_log
   rm $install_pidfile
-
-  # install ephemeris
-  install_ephemeris
 
   # ensure Galaxy is not running through supervisord
   if pgrep "supervisord" > /dev/null
@@ -179,20 +157,35 @@ function galaxy_start {
   # start Galaxy
   export PORT=8080
   echo "starting Galaxy"
-  #sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000 --skip-eggs --skip-wheels
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000 
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --skip-eggs --skip-wheels --log-file=$install_log --pid-file=$install_pidfile
 
   # wait galaxy to start
   galaxy_install_pid=`cat $install_pidfile`
   echo $galaxy_install_pid
-  galaxy-wait -g http://localhost:$PORT -v --timeout 120
+
+  while : ; do
+    tail -n 2 $install_log | grep -E -q "Removing PID file galaxy_install.pid|Daemon is already running"
+    if [ $? -eq 0 ] ; then
+      echo "Galaxy could not be started."
+      echo "More information about this failure may be found in the following log snippet from galaxy_install.log:"
+      echo "========================================"
+      tail -n 60 $install_log
+      echo "========================================"
+      echo $1
+      exit 1
+    fi
+    tail -n 2 $install_log | grep -q "Starting server in PID $galaxy_install_pid"
+    if [ $? -eq 0 ] ; then
+      echo "Galaxy is running."
+      break
+    fi
+  done
 
 }
 
-#________________________________
 function galaxy_stop {
   echo "stopping Galaxy"
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
+  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop-daemon --skip-eggs --skip-wheels --log-file=$install_log --pid-file=$install_pidfile
 
 {% if ansible_virtualization_type == "docker" %}
 # stop postgresql on docker. Keep it running on vm
@@ -204,25 +197,25 @@ if [[ -r /etc/os-release ]]; then
     service stop postgresql
   elif [ "$ID" = "centos" ]; then
     echo "[EL][Docker] Stop postgresql"
-    sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
+    sudo -E -u postgres /usr/pgsql-9.6/bin/pg_ctl -D /var/lib/pgsql/9.6/data stop
   fi
 fi
 {% endif %}
 
-  #echo "uset all variables"
-  #unset GALAXY_CONFIG_STATIC_ENABLED
-  #unset GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE
-  #unset GALAXY_CONFIG_NGINX_UPLOAD_STORE
-  #unset GALAXY_CONFIG_NGINX_UPLOAD_PATH
-  #unset GALAXY_CONFIG_JOB_WORKING_DIRECTORY
-  #unset GALAXY_CONFIG_FILE_PATH
-  #unset GALAXY_CONFIG_NEW_FILE_PATH
-  #unset GALAXY_CONFIG_TEMPLATE_CACHE_PATH
-  #unset GALAXY_CONFIG_CITATION_CACHE_DATA_DIR
-  #unset GALAXY_CONFIG_CLUSTER_FILES_DIRECTORY
-  #unset GALAXY_CONFIG_FTP_UPLOAD_DIR
-  #unset GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG
-  #unset GALAXY_CONFIG_JOB_CONFIG_FILE
+  echo "uset all variables"
+  unset GALAXY_CONFIG_STATIC_ENABLED
+  unset GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE
+  unset GALAXY_CONFIG_NGINX_UPLOAD_STORE
+  unset GALAXY_CONFIG_NGINX_UPLOAD_PATH
+  unset GALAXY_CONFIG_JOB_WORKING_DIRECTORY
+  unset GALAXY_CONFIG_FILE_PATH
+  unset GALAXY_CONFIG_NEW_FILE_PATH
+  unset GALAXY_CONFIG_TEMPLATE_CACHE_PATH
+  unset GALAXY_CONFIG_CITATION_CACHE_DATA_DIR
+  unset GALAXY_CONFIG_CLUSTER_FILES_DIRECTORY
+  unset GALAXY_CONFIG_FTP_UPLOAD_DIR
+  unset GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG
+  unset GALAXY_CONFIG_JOB_CONFIG_FILE
 }
 
 #________________________________

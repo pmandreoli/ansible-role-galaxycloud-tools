@@ -14,9 +14,9 @@ galaxy_directory: galaxy
 # Galaxy install path
 galaxy_install_path: "{{galaxy_FS_path}}/{{galaxy_directory}}"
 
-# Galaxy config/galaxy.ini path
+# Galaxy config/galaxy.yml path
 galaxy_config_path: "{{galaxy_install_path}}/config"
-galaxy_config_file: "{{galaxy_config_path}}/galaxy.ini"
+galaxy_config_file: "{{galaxy_config_path}}/galaxy.yml"
 
 # Virtualenv directory
 galaxy_venv_path: "{{galaxy_install_path}}/.venv"
@@ -51,7 +51,7 @@ Galaxy_flavor_recipe_branch: 'master'
 
 # Set Ephemeris version and path
 tools_venv_dir: '/tmp/tools_venv'
-ephemeris_version: '0.7.0'
+ephemeris_version: '0.9.0'
 
 # Create bootstrap user
 # if an apy key is not present on galaxy, a new user is created to istall tools and removed.
@@ -82,7 +82,7 @@ export_dir: "/export"
 # This role exploits a lite version of galaxy to install data-libraries.
 # It install dataset in /home/galaxy/galaxy/database/files/000 by defaults. 
 # If the default galaxy database directory is different you have two options.
-# By default the role read galaxy.ini and move datasets to file_path dir:
+# By default the role read galaxy.yml and move datasets to file_path dir:
 # move_datasets: true
 # set_dataset_dest_dir: false
 #
