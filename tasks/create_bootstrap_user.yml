@@ -3,13 +3,26 @@
   become_user: root
   become_method: sudo
 
+- name: '[release_17.**] Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
+  template:
+    src: 'manage_galaxy_bootstrap_user.17.py.j2'
+    dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+  become_user: root
+  become_method: sudo
+
 - name: 'Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
   template:
-    src: '{{ item.src }}'
-    dest: '{{ item.dest }}'
-  with_items:
-    - { src: 'manage_galaxy_bootstrap_user.py.j2', dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py' }
-    - { src: 'pwd_generator.j2', dest: '{{ galaxy_custom_script_path }}/pwd-generator' }
+    src: 'manage_galaxy_bootstrap_user.py.j2'
+    dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
+  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+  become_user: root
+  become_method: sudo
+
+- name: 'Copy password random generator script'
+  template:
+    src: 'pwd_generator.j2'
+    dest: '{{ galaxy_custom_script_path }}/pwd-generator'
   become_user: root
   become_method: sudo
 
