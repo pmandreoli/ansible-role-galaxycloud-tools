@@ -21,10 +21,20 @@ import sys
 sys.path.insert(1,'{{galaxy_install_path}}')
 sys.path.insert(1,'{{galaxy_install_path}}/lib')
 
-from galaxy.model import User, APIKeys
-from galaxy.model.mapping import init
-from galaxy.model.orm.scripts import get_config
+from scripts.db_shell import *
+from galaxy.util.bunch import Bunch
+from galaxy.security import GalaxyRBACAgent
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import *
 import argparse
+bunch = Bunch( **globals() )
+engine = create_engine('postgresql://galaxy:galaxy@localhost:5432/galaxy')
+bunch.session = sessionmaker(bind=engine)
+# For backward compatibility with "model.context.current"
+bunch.context = sessionmaker(bind=engine)
+
+security_agent = GalaxyRBACAgent( bunch )
+security_agent.sa_session = sa_session
 
 #______________________________________
 def cli_options():
