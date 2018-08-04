@@ -18,6 +18,9 @@ galaxy_install_path: "{{galaxy_FS_path}}/{{galaxy_directory}}"
 galaxy_config_path: "{{galaxy_install_path}}/config"
 galaxy_config_file: "{{galaxy_config_path}}/galaxy.yml"
 
+# Galaxy version to install
+GALAXY_VERSION: "release_18.05"
+
 # Virtualenv directory
 galaxy_venv_path: "{{galaxy_install_path}}/.venv"
 
@@ -47,7 +50,8 @@ galaxy_tools_base_dir: '/data'
 galaxy_flavor: 'galaxy-no-tools'
 
 # Set Galaxy flavor recipes branch: https://github.com/indigo-dc/Galaxy-flavors-recipes
-Galaxy_flavor_recipe_branch: 'master'
+galaxy_flavor_recipe_repository: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
+galaxy_flavor_recipe_branch: 'master'
 
 # Set Ephemeris version and path
 tools_venv_dir: '/tmp/tools_venv'
