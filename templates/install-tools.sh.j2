@@ -168,7 +168,17 @@ else
 fi
 
 # install tools
-shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2"
+#shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2"
+# workaround to https://github.com/galaxyproject/ephemeris/issues/98
+counter=0
+output=$(shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" 2>&1)
+while [[ $output == *'ConnectionError'* ]]; do
+  echo $output
+  ((counter++))
+  echo "Retry: $counter"
+  sleep 60 # wait for unfinished operations
+  output=$(shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" 2>&1)
+done
 
 exit_code=$?
 
