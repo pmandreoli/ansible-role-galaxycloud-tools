@@ -3,7 +3,7 @@
   become_user: root
   become_method: sudo
 
-- name: '[release_17.**] Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
+- name: '[release_17.**] Copy manage_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
   template:
     src: 'manage_galaxy_bootstrap_user.17.py.j2'
     dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
@@ -11,7 +11,7 @@
   become_user: root
   become_method: sudo
 
-- name: 'Copy manget_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
+- name: 'Copy manage_galaxy_bootstrap_user script to {{ galaxy_custom_script_path }}'
   template:
     src: 'manage_galaxy_bootstrap_user.py.j2'
     dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
