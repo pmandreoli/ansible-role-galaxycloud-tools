@@ -57,13 +57,26 @@
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
   register: admin_users_found
 
-- name: Set bootstrap user as Galaxy admin
+- name: '[release_17.**] Set bootstrap user as Galaxy admin'
   ini_file:
     dest: '{{ galaxy_config_file }}'
     section: 'app:main'
     option: 'admin_users'
-    value: '{{bootstrap_user_mail}}'
-  when: admin_users_found.msg == ""
+    value: '{{ bootstrap_user_mail }}'
+  when:
+    - admin_users_found.msg == ""
+    - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+
+- name: 'Set bootstrap user as Galaxy admin'
+  command: '{{ galaxy_venv_path }}/bin/python
+            {{ galaxy_custom_script_path }}/parse_galaxy_yaml.py
+            -c "{{ galaxy_config_file }}"
+            -s "galaxy"
+            -o "admin_users"
+            -v "{{ bootstrap_user_mail }}"'
+  when:
+    - admin_users_found.msg == ""
+    - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 - include: stop_postgres.yml
   when: ansible_virtualization_type == "docker"
