@@ -33,7 +33,7 @@
   replace:
     dest: '{{ galaxy_config_file }}'
     regexp: 'admin_users: {{ bootstrap_user_mail }}'
-    replace: '#admin_users: None'
+    replace: '#admin_users: null'
   when:
     - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
     - admin_users_found.msg == ""
