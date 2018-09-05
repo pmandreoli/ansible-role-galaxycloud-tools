@@ -53,9 +53,10 @@
   environment:
     VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
-- name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
+- name: '[release_17.**] Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file'
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
   register: admin_users_found
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
 
 - name: '[release_17.**] Set bootstrap user as Galaxy admin'
   ini_file:
@@ -66,6 +67,11 @@
   when:
     - admin_users_found.msg == ""
     - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+
+- name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
+  replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users:[ ]*" replace="admin_users: {{bootstrap_user_mail }},"  #"
+  register: admin_users_found
+  when: (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
 - name: 'Set bootstrap user as Galaxy admin'
   command: '{{ galaxy_venv_path }}/bin/python

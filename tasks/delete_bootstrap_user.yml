@@ -10,9 +10,10 @@
   environment:
     VIRTUAL_ENV: "{{ galaxy_venv_path }}"
 
-- name: Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file
+- name: '[release_17.**] Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file'
   replace: dest={{ galaxy_config_file }} regexp="admin_users = {{bootstrap_user_mail}}," replace="admin_users = "  #"
   register: admin_users_found
+  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
 
 - name: '[release_17.**] Remove admin_users from galaxy.{{galaxy_config_file_extension}}'
   replace:
@@ -23,11 +24,16 @@
     - admin_users_found.msg == ""
     - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
 
+- name: Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file
+  replace: dest={{ galaxy_config_file }} regexp="admin_users: {{bootstrap_user_mail}}," replace="admin_users: "  #"
+  register: admin_users_foun
+  when: (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+
 - name: 'Remove admin_users from galaxy.{{galaxy_config_file_extension}}'
   replace:
     dest: '{{ galaxy_config_file }}'
     regexp: 'admin_users: {{ bootstrap_user_mail }}'
-    replace: '#admin_users = None'
+    replace: '#admin_users: None'
   when:
     - admin_users_found.msg == ""
     - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
