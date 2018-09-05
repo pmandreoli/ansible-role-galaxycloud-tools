@@ -65,11 +65,11 @@
     option: 'admin_users'
     value: '{{ bootstrap_user_mail }}'
   when:
-    - admin_users_found.msg == ""
     - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+    - admin_users_found.msg == ""
 
 - name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
-  replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users:[ ]*" replace="admin_users: {{bootstrap_user_mail }},"  #"
+  replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users:[ ]*" replace="  admin_users{{':'}} {{bootstrap_user_mail }},"  #"
   register: admin_users_found
   when: (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
 
@@ -81,8 +81,8 @@
             -o "admin_users"
             -v "{{ bootstrap_user_mail }}"'
   when:
-    - admin_users_found.msg == ""
     - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+    - admin_users_found.msg == ""
 
 - include: stop_postgres.yml
   when: ansible_virtualization_type == "docker"
