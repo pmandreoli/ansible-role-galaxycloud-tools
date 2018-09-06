@@ -29,6 +29,15 @@ if [[ -r /etc/os-release ]]; then
     . /etc/os-release
 fi
 
+#____________________________________
+# Script needs superuser
+function su_check {
+  if [[ $(/usr/bin/id -u) -ne 0 ]]; then
+    echo -e "[Error] Not running as root."
+    exit
+ fi
+}
+
 #________________________________
 # Check if postgresql is running
 function start_postgresql_vm {
@@ -128,6 +137,9 @@ function install_ephemeris {
 #________________________________
 # Main section
 
+# Script requires superuser to run
+su_check
+
 # clean logs
 echo "Clean logs"
 rm $install_log
@@ -143,29 +155,26 @@ check_postgresql
 if pgrep "supervisord" > /dev/null
 then
 
-  echo "System is up and running. Starting with the installation."
-  export PORT=8080  
-
-else
-
-  # ensure galaxy is not running on run.sh and 8080 port
-  check_lsof
-  echo "Kill run.sh Galaxy instance listening on 8080 port"
-  kill -9 $(lsof -t -i :8080)
-
-  # create log file
-  sudo -E -u $GALAXY_USER touch $install_log
- 
-  # start Galaxy
-  export PORT=8080
-  echo "starting Galaxy"
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
-
-  # wait galaxy to start
-  galaxy_install_pid=`cat $install_pidfile`
-  galaxy-wait -g http://localhost:$PORT -v --timeout 120
-
+  echo "Galaxy managed using supervisord. Shutting it down."
+  supervisorctl stop galaxy:
 fi
+
+# ensure galaxy is not running on run.sh and 8080 port
+check_lsof
+echo "Kill run.sh Galaxy instance listening on 8080 port"
+kill -9 $(lsof -t -i :8080)
+
+# create log file
+sudo -E -u $GALAXY_USER touch $install_log
+ 
+# start Galaxy
+export PORT=8080
+echo "starting Galaxy"
+sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+
+# wait galaxy to start
+galaxy_install_pid=`cat $install_pidfile`
+galaxy-wait -g http://localhost:$PORT -v --timeout 120
 
 # install tools
 #shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2"
