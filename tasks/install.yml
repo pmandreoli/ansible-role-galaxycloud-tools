@@ -60,6 +60,8 @@
   file:
     path: '{{ galaxy_tools_base_dir }}'
     state: directory
+    owner: '{{ galaxy_user }}'
+    group: '{{ galaxy_user }}'
 
 - name: Get Galaxy flavor recipes
   git:
@@ -68,6 +70,8 @@
     force: yes
     dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
     version: '{{ galaxy_flavor_recipe_branch }}'
+  become_user: '{{galaxy_user}}'
+  become: true
 
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
