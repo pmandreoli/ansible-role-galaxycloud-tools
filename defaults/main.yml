@@ -45,7 +45,7 @@ galaxy_admin_api_key: "GALAXY_ADMIN_API_KEY"
 # file for more about the format requirements of this file. The file names must be unique.
 galaxy_tools_tool_list_files: [ "tool_list.yaml" ]
 
-galaxy_tools_base_dir: '{{ galaxy_FS_path }}/.laniakea_utils'
+galaxy_tools_base_dir: '/recipes'
 
 galaxy_flavor: 'galaxy-no-tools'
 
