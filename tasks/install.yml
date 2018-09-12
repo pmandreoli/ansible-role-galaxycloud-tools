@@ -54,14 +54,19 @@
   when: not stat_result.stat.exists|bool
 
 #______________________________________
-# Ansible galaxy is not able to download git submodules.
 # We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
+- name: 'Check if {{ galaxy_tools_base_dir }} exist'
+  stat:
+    path: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
+  register: tool_dir_path
+
 - name: 'Create {{ galaxy_tools_base_dir }}'
   file:
     path: '{{ galaxy_tools_base_dir }}'
     state: directory
-    owner: '{{ galaxy_user }}'
-    group: '{{ galaxy_user }}'
+  when: not tool_dir_path.stat.exists|bool
+  become_user: root
+  become_method: sudo
 
 - name: Get Galaxy flavor recipes
   git:
@@ -70,8 +75,9 @@
     force: yes
     dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
     version: '{{ galaxy_flavor_recipe_branch }}'
-  become_user: '{{galaxy_user}}'
-  become: true
+  when: not tool_dir_path.stat.exists|bool
+  become_user: root
+  become_method: sudo
 
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
