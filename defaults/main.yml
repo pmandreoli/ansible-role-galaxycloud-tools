@@ -109,3 +109,7 @@ add_more_assets: false
 # Inform the role if galaxy tools and reference data will be installed
 # If yes, galaxy is not started
 get_refdata: false
+
+#______________________________________
+# enable debug
+debug: false

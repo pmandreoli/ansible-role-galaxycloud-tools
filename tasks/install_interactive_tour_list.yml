@@ -1,7 +1,17 @@
 ---
-- name: 'Install {{galaxy_flavor}} insteractive tours'
+- name: 'Install {{galaxy_flavor}} interactive tours'
   copy:
     src: '{{interactive_tour_list_path}}/'
     dest: '{{galaxy_install_path}}/config/plugins/tours/'
     owner: '{{galaxy_user}}'
     group: '{{galaxy_user}}'
+  ignore_errors: true
+  when: not debug|bool
+
+- name: 'Install {{galaxy_flavor}} interactive tours'
+  copy:
+    src: '{{interactive_tour_list_path}}/'
+    dest: '{{galaxy_install_path}}/config/plugins/tours/'
+    owner: '{{galaxy_user}}'
+    group: '{{galaxy_user}}'
+  when: debug|bool
