@@ -1,9 +1,2 @@
 ---
 - include: '{{asset_recipe}}'
-  static: no
-  ignore_errors: true
-  when: not debug|bool
-
-- include: '{{asset_recipe}}'
-  static: no
-  when: debug|bool
