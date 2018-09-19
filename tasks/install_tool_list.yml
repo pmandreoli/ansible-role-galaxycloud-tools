@@ -2,6 +2,13 @@
 - name: 'Install {{galaxy_flavor}} Shed tools. Log file available to /tmp/galaxy_tool_install.log'
   shell: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}} >> /tmp/galaxy_tools_install_command.log'
   notify: start galaxy
+  ignore_errors: true
+  when: not debug|bool
+
+- name: 'Install {{galaxy_flavor}} Shed tools. Log file available to /tmp/galaxy_tool_install.log'
+  shell: '{{galaxy_custom_script_path}}/install-tools {{galaxy_admin_api_key}} {{tool_list_file}} >> /tmp/galaxy_tools_install_command.log'
+  notify: start galaxy
+  when: debug|bool
 
 - name: Clean Conda tarballs
   shell: '{{conda_prefix}}/bin/conda clean --tarballs --yes > /dev/null'
