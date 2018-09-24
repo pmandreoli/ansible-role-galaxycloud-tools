@@ -5,7 +5,7 @@
   ignore_errors: true
   when: not debug|bool
 
-- name: 'Install {{galaxy_flavor}} workflow'
+- name: '[DEBUG] Install {{galaxy_flavor}} workflow'
   command: '{{ tools_venv_dir }}/bin/workflow-install --workflow_path {{workflow_list_path}}/ -g http://localhost:8080 -a {{galaxy_admin_api_key}}'
   notify: start galaxy
   when: debug|bool
