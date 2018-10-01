@@ -161,9 +161,9 @@ fi
 
 # ensure galaxy is not running on run.sh and 8080 port
 check_lsof
-echo "Kill run.sh Galaxy instance listening on 8080 port"
+echo "Kill run.sh Galaxy instance listening on 8080 port and 4001 for uwsgi."
 kill -9 $(lsof -t -i :8080)
-
+kill -9 $(lsof -t -i :4001) # clean running uwsgi instances.
 # create log file
 sudo -E -u $GALAXY_USER touch $install_log
  
@@ -180,9 +180,11 @@ galaxy-wait -g http://localhost:$PORT -v --timeout 120
 #shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2"
 # workaround to https://github.com/galaxyproject/ephemeris/issues/98
 counter=0
+COUNT=3
 output=$(shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" 2>&1)
-while [[ $output == *'ConnectionError'* ]]; do
+while [[ $output == *"('Connection aborted.', BadStatusLine("''",))"* ]]; do
   echo $output
+  if [[ $counter == $COUNT ]]; then break; fi
   ((counter++))
   echo "Retry: $counter"
   sleep 60 # wait for unfinished operations
@@ -200,7 +202,6 @@ if ! pgrep "supervisord" > /dev/null
 then
   echo "stopping Galaxy"
   sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
-
 {% if ansible_virtualization_type == "docker" %}
   # stop postgresql on docker. Keep it running on vm
   if [[ $ID = "ubuntu" ]]; then
@@ -211,5 +212,4 @@ then
     sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
   fi
 {% endif %}
-
 fi

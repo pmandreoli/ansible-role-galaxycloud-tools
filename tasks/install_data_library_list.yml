@@ -5,7 +5,7 @@
   ignore_errors: true
   when: not debug|bool
 
-- name: 'Install {{galaxy_flavor}} data libraries'
+- name: '[DEBUG] Install {{galaxy_flavor}} data libraries'
   command: '{{ tools_venv_dir }}/bin/setup-data-libraries -i {{data_library_list_file}} -g http://localhost:8080 -a {{galaxy_admin_api_key}}'
   notify: start galaxy
   when: debug|bool
