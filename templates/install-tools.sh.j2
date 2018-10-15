@@ -171,7 +171,6 @@ check_postgresql
 # If Galaxy is running we install tools, otherwise we run int through run.sh
 if pgrep "supervisord" > /dev/null
 then
-
   echo "Galaxy managed using supervisord. Shutting it down."
   supervisorctl stop galaxy:
 fi
@@ -219,7 +218,7 @@ if [ $exit_code != 0 ] ; then
 fi
 
 # stop Galaxy if it was not running before
-if ! pgrep "supervisord" > /dev/null
+if pgrep "supervisord" > /dev/null
 then
   echo "Stopping Galaxy"
 {% if galaxy_version_number|float < 18.01 %}
