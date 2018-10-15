@@ -82,12 +82,12 @@
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
 #______________________________________
-- include: read_galaxy_config_file.yml
-
 - include: create_bootstrap_user.yml
   when: create_bootstrap_user|bool
   become_user: '{{galaxy_user}}'
   become: yes
+
+- include: read_galaxy_config_file.yml
 
 - include: tools.yml
 
