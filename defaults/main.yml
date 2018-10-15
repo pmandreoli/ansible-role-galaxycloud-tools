@@ -15,11 +15,17 @@ galaxy_directory: galaxy
 galaxy_install_path: "{{galaxy_FS_path}}/{{galaxy_directory}}"
 
 # Galaxy config/galaxy.yml path
+# Galaxy config file can either be 'ini-paste' (old style) or 'yaml'
+galaxy_config_style: "yaml"
+galaxy_config_file_extension: "{{ 'yml' if galaxy_config_style in ('yaml', 'yml') else 'ini' }}"
+galaxy_config_file_basename: "galaxy.{{ 'yml' if galaxy_config_style in ('yaml', 'yml') else 'ini' }}"
 galaxy_config_path: "{{galaxy_install_path}}/config"
-galaxy_config_file: "{{galaxy_config_path}}/galaxy.yml"
+galaxy_config_file: "{{ galaxy_config_path }}/{{ galaxy_config_file_basename }}"
+galaxy_config_section: "{{ 'galaxy' if galaxy_config_style in ('yaml', 'yml') else 'app:main' }}"
 
 # Galaxy version to install
 GALAXY_VERSION: "release_18.05"
+galaxy_version_number: '18.05'
 
 # Virtualenv directory
 galaxy_venv_path: "{{galaxy_install_path}}/.venv"
