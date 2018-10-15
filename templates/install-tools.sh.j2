@@ -30,7 +30,7 @@ ephemeris_version='{{ ephemeris_version }}'
 #########
 # Galaxy configuration variables
 # Do not change this values.
-export GALAXY_CONFIG_FILE='{{ galaxy_config_path }}/galaxy.lite.yml'
+export GALAXY_CONFIG_FILE='/tmp/galaxy.lite.yml'
 export GALAXY_CONFIG_DATABASE_CONNECTION='{{ galaxy_database_connection.stdout  }}'
 export GALAXY_CONFIG_INSTALL_DATABASE_CONNECTION='{{ galaxy_install_database_connection.stdout }}'
 export GALAXY_CONFIG_TOOL_DEPENDENCY_DIR='{{ galaxy_tool_deps_path.stdout }}'
@@ -168,6 +168,11 @@ install_ephemeris
 # check PostgreSQL
 check_postgresql
 
+# create galaxy.yml file.
+# The extension of the config file is used by yaml parser
+# it is not possible to exploit the galaxy.yml.sample file directly
+cp $GALAXY/config/galaxy.yml.sample $GALAXY_CONFIG_FILE
+
 # If Galaxy is running we install tools, otherwise we run int through run.sh
 if pgrep "supervisord" > /dev/null
 then
@@ -237,6 +242,9 @@ then
   fi
 {% endif %}
 fi
+
+# Delete temp galaxy.lite.yml file
+rm -f $GALAXY_CONFIG_FILE
 
 # Unset all Galaxy variables
 unset GALAXY_CONFIG_FILE
