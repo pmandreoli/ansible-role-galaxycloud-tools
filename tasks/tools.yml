@@ -29,6 +29,13 @@
     mode: a+x
   when: galaxy_version_number|float >= 18.00
 
+- name: 'Copy galaxy.{{ galaxy_config_file_extension }}.sample file to galaxy.lite.{{ galaxy_config_file_extension }}'
+  copy:
+    src: '{{ galaxy_config_path }}/galaxy.{{ galaxy_config_file_extension }}.sample'
+    dest: '{{ galaxy_config_path }}/galaxy.lite.{{ galaxy_config_file_extension }}'
+    remote_src: true  
+  when: galaxy_version_number|float >= 18.00
+
 - include: install_tool_list.yml
   with_items: '{{ galaxy_tools_tool_list_files }}'
   loop_control:
