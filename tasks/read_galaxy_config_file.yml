@@ -12,7 +12,7 @@
 #______________________________________
 # Get admin variables
 - name: 'Get admin_users from {{ galaxy_config_file }}'
-  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_path }} -s {{ galaxy_config_section }} -o admin_users'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o admin_users'
   register: galaxy_admin_users
 
 #______________________________________
