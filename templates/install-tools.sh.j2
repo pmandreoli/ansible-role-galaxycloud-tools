@@ -32,7 +32,7 @@ ephemeris_version='{{ ephemeris_version }}'
 # Do not change this values.
 export GALAXY_CONFIG_FILE='{{ galaxy_config_file }}.sample'
 export GALAXY_CONFIG_DATABASE_CONNECTION='{{ galaxy_database_connection.stdout  }}'
-export GALAXY_CONFIG_INSTALL_DATABASE_CONNECTION='{{ galaxy_installdatabase_connection.stdout }}'
+export GALAXY_CONFIG_INSTALL_DATABASE_CONNECTION='{{ galaxy_install_database_connection.stdout }}'
 export GALAXY_CONFIG_TOOL_DEPENDENCY_DIR='{{ galaxy_tool_deps_path.stdout }}'
 export GALAXY_CONDA_PREFIX='{{ conda_prefix }}'
 DEFAULT_JOB_CONF={{galaxy_config_path}}/job_conf.xml.sample_basic
