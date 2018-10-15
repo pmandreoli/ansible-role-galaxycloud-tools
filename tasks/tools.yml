@@ -40,3 +40,9 @@
   with_items: '{{ galaxy_tools_tool_list_files }}'
   loop_control:
     loop_var: tool_list_file
+
+- name: 'Delete galaxy.lite.{{ galaxy_config_file_extension }}'
+  file:
+    path: '{{ galaxy_config_path }}/galaxy.lite.{{ galaxy_config_file_extension }}'
+    state: absent
+  when: galaxy_version_number|float >= 18.00
