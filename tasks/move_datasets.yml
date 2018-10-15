@@ -23,7 +23,7 @@
   when: not set_dataset_dest_dir|bool
 
 - name: 'Move datasets to file_path directory from {{ galaxy_config_file }} to {{ register_file_path.stdout}}'
-  shell: 'rsync -av {{ galaxy_install_path} }/database/files/ {{ register_file_path.stdout }} > /tmp/move_datasets_rsync.log'
+  shell: 'rsync -av {{ galaxy_install_path }}/database/files/ {{ register_file_path.stdout }} > /tmp/move_datasets_rsync.log'
   when: not set_dataset_dest_dir|bool
   become_user: '{{galaxy_user}}'
   become: true
