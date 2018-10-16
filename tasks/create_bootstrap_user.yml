@@ -7,7 +7,7 @@
   template:
     src: 'manage_galaxy_bootstrap_user.17.py.j2'
     dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
-  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+  when: galaxy_version_number|float < 18.00
   become_user: root
   become_method: sudo
 
@@ -15,7 +15,7 @@
   template:
     src: 'manage_galaxy_bootstrap_user.py.j2'
     dest: '{{ galaxy_custom_script_path }}/manage_galaxy_bootstrap_user.py'
-  when:  (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+  when:  galaxy_version_number|float >= 18.00
   become_user: root
   become_method: sudo
 
@@ -56,7 +56,7 @@
 - name: '[release_17.**] Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file'
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users[ ]*=[ ]*" replace="admin_users = {{bootstrap_user_mail }},"  #"
   register: admin_users_found
-  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+  when: galaxy_version_number|float < 18.00
 
 - name: '[release_17.**] Set bootstrap user as Galaxy admin'
   ini_file:
@@ -65,13 +65,13 @@
     option: 'admin_users'
     value: '{{ bootstrap_user_mail }}'
   when:
-    - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+    - galaxy_version_number|float < 18.00
     - admin_users_found.msg == ""
 
 - name: Check/Set bootstrap user as Galaxy Admin if admin_users tag is already in the config file
   replace: dest={{ galaxy_config_file }} regexp="^[ ]*admin_users:[ ]*" replace="  admin_users{{':'}} {{bootstrap_user_mail }},"  #"
   register: admin_users_found
-  when: (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+  when: galaxy_version_number|float >= 18.00
 
 - name: 'Set bootstrap user as Galaxy admin'
   command: '{{ galaxy_venv_path }}/bin/python
@@ -81,7 +81,7 @@
             -o "admin_users"
             -v "{{ bootstrap_user_mail }}"'
   when:
-    - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+    - galaxy_version_number|float >= 18.00
     - admin_users_found.msg == ""
 
 - include: stop_postgres.yml

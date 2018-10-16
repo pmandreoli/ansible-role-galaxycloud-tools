@@ -13,7 +13,7 @@
 - name: '[release_17.**] Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file'
   replace: dest={{ galaxy_config_file }} regexp="admin_users = {{bootstrap_user_mail}}," replace="admin_users = "  #"
   register: admin_users_found
-  when: (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+  when: galaxy_version_number|float < 18.01
 
 - name: '[release_17.**] Remove admin_users from galaxy.{{galaxy_config_file_extension}}'
   replace:
@@ -21,13 +21,13 @@
     regexp: 'admin_users = {{ bootstrap_user_mail }}'
     replace: '#admin_users = None'
   when:
-    - (galaxy_version_number is defined) and (galaxy_version_number|float < 18.01)
+    - galaxy_version_number|float < 18.01
     - admin_users_found.msg == ""
 
 - name: Remove bootstrap user as Galaxy Admin if admin_users tag was already in the config file
   replace: dest={{ galaxy_config_file }} regexp="admin_users{{':'}} {{bootstrap_user_mail}}," replace="admin_users{{':'}} "  #"
   register: admin_users_found
-  when: (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+  when: galaxy_version_number|float >= 18.01
 
 - name: 'Remove admin_users from galaxy.{{galaxy_config_file_extension}}'
   replace:
@@ -35,7 +35,7 @@
     regexp: 'admin_users: {{ bootstrap_user_mail }}'
     replace: '#admin_users: null'
   when:
-    - (GALAXY_VERSION == 'master') or (GALAXY_VERSION == 'dev') or (galaxy_version_number|float >= 18)
+    - galaxy_version_number|float >= 18.01
     - admin_users_found.msg == ""
 
 - include: stop_postgres.yml

@@ -12,6 +12,18 @@
 GALAXY='{{galaxy_install_path}}'
 GALAXY_USER='{{galaxy_user}}'
 
+#########
+# Galaxy configuration variables
+# Do not change this values.
+#export GALAXY_CONFIG_FILE='{{ galaxy_config_file }}.sample'
+#export GALAXY_CONFIG_DATABASE_CONNECTION='{{ galaxy_database_connection.stdout  }}'
+#export GALAXY_CONFIG_INSTALL_DATABASE_CONNECTION='{{ galaxy_install_database_connection.stdout }}'
+#export GALAXY_CONFIG_TOOL_DEPENDENCY_DIR='{{ galaxy_tool_deps_path.stdout }}'
+#export GALAXY_CONDA_PREFIX='{{ conda_prefix }}'
+#DEFAULT_JOB_CONF={{galaxy_config_path}}/job_conf.xml.sample_basic
+#export GALAXY_CONFIG_JOB_CONFIG_FILE=$DEFAULT_JOB_CONF
+#export GALAXY_CONFIG_ADMIN_USERS='{{ galaxy_admin_users.stdout }}'
+
 # allow galaxy configured to start using a proxy, to start with run.sh
 # if the static_enabled option is configure in galaxy.ini you have to comment it or set to
 # static_enabled = True
@@ -31,9 +43,7 @@ GALAXY_USER='{{galaxy_user}}'
 #unset GALAXY_CONFIG_CLUSTER_FILES_DIRECTORY
 #unset GALAXY_CONFIG_FTP_UPLOAD_DIR
 #unset GALAXY_CONFIG_INTEGRATED_TOOL_PANEL_CONFIG
-
-#JOB_CONF={{galaxy_config_path}}/job_conf.xml.sample_basic
-#export GALAXY_CONFIG_JOB_CONFIG_FILE=$JOB_CONF
+#########
 
 #---
 install_log="$GALAXY/galaxy_startup_lite.log"
@@ -210,6 +220,11 @@ fi
 {% endif %}
 
   #echo "uset all variables"
+  #unset GALAXY_CONFIG_FILE
+  #unset GALAXY_CONFIG_DATABASE_CONNECTION
+  #unset GALAXY_CONFIG_DATABASE_CONNECTION_INSTALL
+  #unset GALAXY_CONFIG_TOOL_DEPENDENCY_DIR
+  #unset GALAXY_CONFIG_ADMIN_USERS
   #unset GALAXY_CONFIG_STATIC_ENABLED
   #unset GALAXY_CONFIG_ALLOW_LIBRARY_PATH_PASTE
   #unset GALAXY_CONFIG_NGINX_UPLOAD_STORE

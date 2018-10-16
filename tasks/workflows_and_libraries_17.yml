@@ -3,25 +3,6 @@
   supervisorctl: name="galaxy:" state=stopped
   ignore_errors: yes
 
-- name: '[release_17.**] backup galaxy config file'
-  copy:
-    src: '{{galaxy_config_file}}'
-    dest: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-    force: no # prevent galaxy.prod.*** be rewritten
-
-- include: create_galaxy_config_lite.yml 
-
-- name: '[release_17.**] Move to lite galaxy configuration file'
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.lite.{{galaxy_config_file_extension}}'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true
-
 - name: '[release_17.**] Copy galaxy-startup-lite script'
   template:
     src: 'galaxy-startup-lite.17.sh.j2'
@@ -73,11 +54,3 @@
   when:
     - move_datasets|bool
     - home_galaxy_database_dir.stat.exists
-
-- name: '[release_17.**] restore galaxy configuration file'
-  copy:
-    src: '{{galaxy_config_path}}/galaxy.prod.{{galaxy_config_file_extension}}'
-    dest: '{{galaxy_config_file}}'
-    owner: '{{galaxy_user}}'
-    group: '{{galaxy_user}}'
-    remote_src: true

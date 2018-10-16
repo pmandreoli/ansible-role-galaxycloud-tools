@@ -1,0 +1,36 @@
+---
+#______________________________________
+# Get database variables
+- name: 'Get database_connection from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o database_connection'
+  register: galaxy_database_connection
+
+- name: 'Get install_database_connection from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o install_database_connection'
+  register: galaxy_install_database_connection
+
+#______________________________________
+# Get admin variables
+- name: 'Get admin_users from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o admin_users'
+  register: galaxy_admin_users
+
+#______________________________________
+# Get Conda prefix
+
+- name: 'Get conda prefix from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o conda_prefix'
+  register: galaxy_conda_prefix
+
+- name: 'Get tool dependency directory path from {{ galaxy_config_file }}'
+  command: '{{ galaxy_venv_path }}/bin/python /tmp/read_galaxy_config_file.py -c {{ galaxy_config_file }} -s {{ galaxy_config_section }} -o tool_dependency_dir'
+  register: galaxy_tool_deps_path
+
+- name: Set conda_prefix variable
+  set_fact:
+    conda_prefix: '{{ galaxy_conda_prefix.stdout }}'
+
+- name: Set conda_prefix variable
+  set_fact:
+    conda_prefix: '{{ galaxy_tool_deps_path.stdout }}/_conda'
+  when: (galaxy_conda_prefix.stdout == []) or (galaxy_conda_prefix.stdout == "<tool_dependency_dir>/_conda")
