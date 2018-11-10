@@ -56,8 +56,9 @@ galaxy_tools_base_dir: '/data'
 galaxy_flavor: 'galaxy-no-tools'
 
 # Set Galaxy flavor recipes branch: https://github.com/indigo-dc/Galaxy-flavors-recipes
-galaxy_flavor_recipe_repository: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
-galaxy_flavor_recipe_branch: 'master'
+galaxy_flavors_recipes_url: 'https://github.com/indigo-dc/Galaxy-flavors-recipes.git'
+galaxy_flavors_recipes_dir: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
+galaxy_flavors_recipes_tag: 'master'
 
 # Set Ephemeris version and path
 tools_venv_dir: '/tmp/tools_venv'

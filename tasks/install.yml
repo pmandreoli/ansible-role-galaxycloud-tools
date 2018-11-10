@@ -69,11 +69,11 @@
 
 - name: Get Galaxy flavor recipes
   git:
-    repo: '{{ galaxy_flavor_recipe_repository }}'
+    repo: '{{ galaxy_flavors_recipes_url }}'
+    dest: '{{ galaxy_flavors_recipes_dir }}'
+    version: '{{ galaxy_flavors_recipes_tag }}'
     clone: yes
     force: yes
-    dest: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
-    version: '{{ galaxy_flavor_recipe_branch }}'
   when: not tool_dir_path.stat.exists|bool
   become_user: root
   become_method: sudo
