@@ -1,4 +1,11 @@
 ---
+- name: '[VM] Ensure galaxy started to install workflows'
+  supervisorctl:
+    name: 'galaxy:'
+    state: started
+  ignore_errors: yes
+  when: ansible_virtualization_type != "docker"
+
 # Galaxy is already running on VMs, so we install worflows and data libraries.
 # On Docker we start it in lite mode.
 
