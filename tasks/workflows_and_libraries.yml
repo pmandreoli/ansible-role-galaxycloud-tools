@@ -1,4 +1,9 @@
 ---
+- name: '[VM] Ensure galaxy is started to install workflows'
+  command: "{{ galaxyctl_bin_path }}/galaxyctl restart galaxy --force"
+  ignore_errors: yes
+  when: ansible_virtualization_type != "docker"
+
 # Galaxy is already running on VMs, so we install worflows and data libraries.
 # On Docker we start it in lite mode.
 
