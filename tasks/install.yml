@@ -79,7 +79,7 @@
   become_method: sudo
 
 - name: Include sources list
-  include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
+  include: '{{ galaxy_flavors_recipes_dir }}/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
 - debug:
     msg: "{{ item }}"
