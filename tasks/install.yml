@@ -81,6 +81,12 @@
 - name: Include sources list
   include: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes/{{galaxy_flavor}}/{{galaxy_flavor}}-sources-list.yml'
 
+- debug:
+    msg: "{{ item }}"
+  with_items:
+   - 'workflow: {{ install_workflows }}'
+   - 'data: {{ install_data_libraries }}'
+
 #______________________________________
 - include: create_bootstrap_user.yml
   when: create_bootstrap_user|bool
