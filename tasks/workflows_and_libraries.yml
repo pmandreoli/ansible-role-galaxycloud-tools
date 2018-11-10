@@ -1,18 +1,17 @@
 ---
-- name: Stop galaxy
-  supervisorctl:
-    name: 'galaxy:'
-    state: stopped
-  ignore_errors: yes
+# Galaxy is already running on VMs, so we install worflows and data libraries.
+# On Docker we start it in lite mode.
 
-- name: 'Copy galaxy-startup-lite script'
+- name: '[Docker] Copy galaxy-startup-lite script'
   template:
     src: 'galaxy-startup-lite.sh.j2'
     dest: '{{galaxy_custom_script_path}}/galaxy-startup-lite'
     mode: a+x
+  when: ansible_virtualization_type == "docker"
 
-- name: 'Start Galaxy lite'
+- name: '[Docker] Start Galaxy lite'
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite start >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
 - name: 'Create/invoke script virtualenv'
   pip:
@@ -44,8 +43,9 @@
 #    - install_data_libraries|bool
 #    - not create_bootstrap_user|bool
 
-- name: 'Stop Galaxy lite'
+- name: '[Docker] Stop Galaxy lite'
   shell: '{{galaxy_custom_script_path}}/galaxy-startup-lite stop >> /tmp/galaxy_startup_lite.log'
+  when: ansible_virtualization_type == "docker"
 
 #______________________________________
 # Move datasets if src dir exists
