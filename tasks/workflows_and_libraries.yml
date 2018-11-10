@@ -1,8 +1,6 @@
 ---
 - name: '[VM] Ensure galaxy is started to install workflows'
-  supervisorctl:
-    name: 'galaxy:'
-    state: started
+  command: "{{ galaxyctl_bin_path }}/galaxyctl restart galaxy --force"
   ignore_errors: yes
   when: ansible_virtualization_type != "docker"
 
