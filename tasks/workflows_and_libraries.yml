@@ -1,5 +1,5 @@
 ---
-- name: '[VM] Ensure galaxy started to install workflows'
+- name: '[VM] Ensure galaxy is started to install workflows'
   supervisorctl:
     name: 'galaxy:'
     state: started
