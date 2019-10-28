@@ -10,7 +10,7 @@ The list of tools to install is provided in files/tool_list.yaml file, hosted on
 Requirements
 ------------
 
-This ansible role supports CentOS 7, Ubuntu 14.04 Trusty and Ubuntu 16.04 Xenial
+This ansible role supports CentOS 7 and Ubuntu 16.04 Xenial
 
 Minimum ansible version: 2.1.2.0
 
