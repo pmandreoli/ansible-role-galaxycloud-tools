@@ -114,6 +114,10 @@ Currently, to create it, few informations are needed:
 By default, the api key is random-generated, overwriting the ``galaxy_admin_api_key`` variable assignment. You can set it to a defined value, by setting this ``create_random_api_key`` to false.
 ``create_random_api_key``: ``true``
 
+``get_refdata``: inform the role if reference data will be installed. If yes, galaxy is not started (default: ``false``).
+
+``debug``: enable debug messages on Ansible (default: ``false``).
+
 Example Playbook
 ----------------
 
