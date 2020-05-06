@@ -20,7 +20,7 @@ install_log="/var/log/galaxy/galaxy_tools_install_$now.log"
 install_pidfile='/var/log/galaxy/galaxy_tools_install.pid'
 ephemeris_log="/tmp/ephemeris_$now.log"
 #---
-postgresql_version='9.6'
+postgresql_version='9.5'
 #---
 {% if galaxy_version_number|float < 18.01 %}
 ephemeris_version='0.7.0'
@@ -98,8 +98,8 @@ function check_postgres_status {
     /usr/lib/postgresql/${postgresql_version}/bin/pg_isready -U "$PGUSER" -q
   elif [ "$ID" = "centos" ]; then
     /usr/pgsql-${postgresql_version}/bin/pg_isready -U "$PGUSER" -q
-    DATA=$?
   fi
+    DATA=$?
 
 }
 
@@ -183,24 +183,26 @@ fi
 
 # ensure galaxy is not running on run.sh and 8080 port
 check_lsof
+export PORT=8080
 echo "Kill run.sh Galaxy instance listening on 8080 port and 4001 for uwsgi."
-kill -9 $(lsof -t -i :8080)
+kill -9 $(lsof -t -i :$PORT)
 kill -9 $(lsof -t -i :4001) # clean running uwsgi instances.
 # create log file
 sudo -E -u $GALAXY_USER touch $install_log
  
 # start Galaxy
-export PORT=8080
-echo "Starting Galaxy"
-{% if galaxy_version_number|float < 18.01 %}
-sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --log-file=$install_log --pid-file=$install_pidfile
-{% else %}
-sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
-{% endif %}
-
-# wait galaxy to start
-galaxy_install_pid=`cat $install_pidfile`
-galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
+##export PORT=8080 #moved before
+#echo "Starting Galaxy"
+#{% if galaxy_version_number|float < 18.01 %}
+#sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --log-file=$install_log --pid-file=$install_pidfile
+#{% else %}
+#sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+#{% endif %}
+#
+## wait galaxy to start
+#galaxy_install_pid=`cat $install_pidfile`
+#galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
+# commentata tutta
 
 # install tools using ephemeris
 # usage: shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
