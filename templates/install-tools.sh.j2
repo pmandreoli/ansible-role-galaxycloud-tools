@@ -12,8 +12,8 @@
 
 # Usage: install-tools GALAXY_ADMIN_API_KEY tool-list.yml
 
-GALAXY='{{galaxy_install_path}}'
-GALAXY_USER='{{galaxy_user}}'
+GALAXY='/home/galaxy/galaxy'
+GALAXY_USER='galaxy'
 #---
 now=$(date +"%b-%d-%y-%H%M%S")
 install_log="/var/log/galaxy/galaxy_tools_install_$now.log"
@@ -167,7 +167,7 @@ rm $install_pidfile
 install_ephemeris
 
 # check PostgreSQL
-check_postgresql
+#test check_postgresql
 
 # create galaxy.yml file.
 # The extension of the config file is used by yaml parser

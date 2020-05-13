@@ -15,13 +15,6 @@
     - lsof
   when: ansible_os_family == "Debian"
 
-- name: '[release_17.**] Copy the install-tools script'
-  template:
-    src: 'install-tools.17.sh.j2'
-    dest: '{{galaxy_custom_script_path}}/install-tools'
-    mode: a+x
-  when: galaxy_version_number|float < 18.00
-
 - name: 'Copy the install-tools script'
   template:
     src: 'install-tools.sh.j2'

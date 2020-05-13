@@ -18,7 +18,7 @@
     mode: a+x
 
 #______________________________________
-# get galaxy version number to support for older galaxy versione (<18.01) when ini file was used
+# get galaxy version number to support old version (<20.10) when ini file was used
 
 - name: Get Galaxy version number only for comparison
   set_fact:
@@ -54,6 +54,7 @@
 
 #______________________________________
 # We clone here Galaxy-flavor-recipes in {{galaxy_tools_base_dir}}
+
 - name: 'Check if {{ galaxy_tools_base_dir }} exist'
   stat:
     path: '{{ galaxy_tools_base_dir }}/Galaxy-flavors-recipes'
@@ -99,11 +100,6 @@
 
 - include: interactive_tours.yml
   when: install_interactive_tours|bool
-
-- include: workflows_and_libraries_17.yml
-  when:
-   - galaxy_version_number|float < 18.00
-   - (install_workflows|bool) or (install_data_libraries|bool)
 
 - include: workflows_and_libraries.yml
   when:
