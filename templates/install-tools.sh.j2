@@ -22,11 +22,11 @@ ephemeris_log="/tmp/ephemeris_$now.log"
 #---
 postgresql_version='9.5'
 #---
-{% if galaxy_version_number|float < 18.01 %}
-ephemeris_version='0.7.0'
-{% else %}
+#{% if galaxy_version_number|float < 18.01 %}
+#ephemeris_version='0.7.0'
+#{% else %}
 ephemeris_version='{{ ephemeris_version }}'
-{% endif %}
+#{% endif %}
 
 #########
 # Galaxy configuration variables
@@ -167,7 +167,7 @@ rm $install_pidfile
 install_ephemeris
 
 # check PostgreSQL
-#test check_postgresql
+test check_postgresql
 
 # create galaxy.yml file.
 # The extension of the config file is used by yaml parser
@@ -175,14 +175,15 @@ install_ephemeris
 cp $GALAXY/config/galaxy.yml.sample $GALAXY_CONFIG_FILE
 
 # If Galaxy is running we install tools, otherwise we run int through run.sh
-if pgrep "supervisord" > /dev/null
-then
-  echo "Galaxy managed using supervisord. Shutting it down."
-  supervisorctl stop galaxy:
-fi
+#test
+#if pgrep "supervisord" > /dev/null
+#then
+#  echo "Galaxy managed using supervisord. Shutting it down."
+#  supervisorctl stop galaxy:
+#fi
 
 # ensure galaxy is not running on run.sh and 8080 port
-check_lsof
+#check_lsof
 export PORT=8080
 echo "Kill run.sh Galaxy instance listening on 8080 port and 4001 for uwsgi."
 kill -9 $(lsof -t -i :$PORT)
@@ -192,17 +193,16 @@ sudo -E -u $GALAXY_USER touch $install_log
  
 # start Galaxy
 ##export PORT=8080 #moved before
-#echo "Starting Galaxy"
+echo "Starting Galaxy"
 #{% if galaxy_version_number|float < 18.01 %}
 #sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --log-file=$install_log --pid-file=$install_pidfile
 #{% else %}
-#sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
 #{% endif %}
-#
-## wait galaxy to start
-#galaxy_install_pid=`cat $install_pidfile`
-#galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
-# commentata tutta
+
+# wait galaxy to start
+galaxy_install_pid=`cat $install_pidfile`
+galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
 
 # install tools using ephemeris
 # usage: shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
@@ -249,25 +249,25 @@ if [ $exit_code != 0 ] ; then
 fi
 
 # stop Galaxy if it was not running before
-if pgrep "supervisord" > /dev/null
-then
+#if pgrep "supervisord" > /dev/null
+#then
   echo "Stopping Galaxy"
-{% if galaxy_version_number|float < 18.01 %}
-  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop-daemon --log-file=$install_log --pid-file=$install_pidfile
-{% else %}
+#{% if galaxy_version_number|float < 18.01 %}
+#  sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop-daemon --log-file=$install_log --pid-file=$install_pidfile
+#{% else %}
   sudo -E -u $GALAXY_USER $GALAXY/run.sh --stop $install_pidfile
-{% endif %}
-{% if ansible_virtualization_type == "docker" %}
+#{% endif %}
+#{% if ansible_virtualization_type == "docker" %}
   # stop postgresql on docker. Keep it running on vm
-  if [[ $ID = "ubuntu" ]]; then
-    echo "[Ubuntu][Docker] Stop postgresql."
-    service stop postgresql
-  elif [[ $ID = "centos" ]]; then
-    echo "[EL][Docker] Stop postgresql"
-    sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
-  fi
-{% endif %}
-fi
+#  if [[ $ID = "ubuntu" ]]; then
+#    echo "[Ubuntu][Docker] Stop postgresql."
+#    service stop postgresql
+#  elif [[ $ID = "centos" ]]; then
+#    echo "[EL][Docker] Stop postgresql"
+#    sudo -Hiu postgres /usr/pgsql-${postgresql_version}/bin/pg_ctl -D /var/lib/pgsql/${postgresql_version}/data stop
+#  fi
+#{% endif %}
+#fi
 
 # Delete temp galaxy.lite.yml file
 rm -f $GALAXY_CONFIG_FILE
