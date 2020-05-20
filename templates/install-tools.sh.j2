@@ -31,7 +31,8 @@ ephemeris_version='{{ ephemeris_version }}'
 #########
 # Galaxy configuration variables
 # Do not change this values.
-export GALAXY_CONFIG_FILE='/tmp/galaxy.lite.yml'
+#export GALAXY_CONFIG_FILE='/tmp/galaxy.lite.yml'
+export GALAXY_CONFIG_FILE='/home/galaxy/config/galaxy.yml'
 export GALAXY_CONFIG_DATABASE_CONNECTION='{{ galaxy_database_connection.stdout  }}'
 export GALAXY_CONFIG_INSTALL_DATABASE_CONNECTION='{{ galaxy_install_database_connection.stdout }}'
 export GALAXY_CONFIG_TOOL_DEPENDENCY_DIR='{{ galaxy_tool_deps_path.stdout }}'
@@ -172,7 +173,7 @@ test check_postgresql
 # create galaxy.yml file.
 # The extension of the config file is used by yaml parser
 # it is not possible to exploit the galaxy.yml.sample file directly
-cp $GALAXY/config/galaxy.yml.sample $GALAXY_CONFIG_FILE
+#cp $GALAXY/config/galaxy.yml.sample $GALAXY_CONFIG_FILE
 
 # If Galaxy is running we install tools, otherwise we run int through run.sh
 #test
@@ -197,12 +198,13 @@ echo "Starting Galaxy"
 #{% if galaxy_version_number|float < 18.01 %}
 #sudo -E -u $GALAXY_USER $GALAXY/run.sh --daemon --log-file=$install_log --pid-file=$install_pidfile
 #{% else %}
-sudo -E -u $GALAXY_USER $GALAXY/run.sh -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+#sudo -E -u $GALAXY_USER $GALAXY/run.sh start -d $install_log --pidfile $install_pidfile  --http-timeout 3000
+sudo -E -u $GALAXY_USER $GALAXY/run.sh start --pidfile $install_pidfile  --http-timeout 3000
 #{% endif %}
 
 # wait galaxy to start
 galaxy_install_pid=`cat $install_pidfile`
-galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
+galaxy-wait -g http://127.0.0.1:$PORT -v --timeout 3000 #120
 
 # install tools using ephemeris
 # usage: shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
@@ -214,7 +216,7 @@ galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
 #COUNT=3
 #output=$(shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log 2>&1)
 #while [[ $output == *"('Connection aborted.', BadStatusLine("''",))"* ]]; do
-#  echo $output
+#  echo $outputn
 #  if [[ $counter == $COUNT ]]; then break; fi
 #  ((counter++))
 #  echo "Retry: $counter"
@@ -223,7 +225,7 @@ galaxy-wait -g http://localhost:$PORT -v --timeout 3000 #120
 #done
 
 # install tools
-shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
+shed-tools install -g "http://127.0.0.1:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
 
 # define ephemeris success string
 ephemeris_success="All repositories have been installed."
@@ -239,7 +241,7 @@ while ! grep "$ephemeris_success" $ephemeris_log > /dev/null ; do
   echo "Not all tools installed. Restarting ephemeris."
   ((counter++))
   echo "Retry: $counter/$COUNT"
-  shed-tools install -g "http://localhost:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
+  shed-tools install -g "http://127.0.0.1:$PORT" -a $1 -t "$2" --log_file $ephemeris_log
 done
 
 exit_code=$?
@@ -270,7 +272,7 @@ fi
 #fi
 
 # Delete temp galaxy.lite.yml file
-rm -f $GALAXY_CONFIG_FILE
+#rm -f $GALAXY_CONFIG_FILE
 
 # Unset all Galaxy variables
 unset GALAXY_CONFIG_FILE
